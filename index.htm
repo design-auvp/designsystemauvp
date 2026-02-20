@@ -1,0 +1,2097 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUVP Design System</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons CDN -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Latin:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Configuração Customizada do Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'anek': ['"Anek Latin"', 'sans-serif'],
+                        'roboto': ['"Roboto"', 'sans-serif'],
+                        'sora': ['"Sora"', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand-green': '#023619',
+                        'brand-gold': '#efbf4e',
+                        'brand-gold-dark': '#d4a73d',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
+            color: #111827;
+        }
+        
+        /* Padrão de Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Scrollbar Dark para Plataforma */
+        .custom-scrollbar-dark::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar-dark::-webkit-scrollbar-track { background: #18181b; border-radius: 4px; }
+        .custom-scrollbar-dark::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+        .custom-scrollbar-dark::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+        /* Animações Globais Adicionais (Widgets) */
+        @keyframes float-hint {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, -5px); }
+        }
+        .animate-float {
+            animation: float-hint 2s ease-in-out infinite;
+        }
+
+        /* Utilitário para ocultar seções e itens do menu */
+        .hidden-section { display: none !important; }
+        .hidden-menu-item { display: none !important; }
+        
+        /* Animação de entrada suave */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ESTILOS DA FAQ (Geral) */
+        .faq-tab { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .faq-menu-claro .ativo { color: #1a1a1a !important; font-weight: 600; text-decoration: underline !important; text-underline-offset: 4px; }
+        .faq-menu-escuro .ativo { color: #ffffff !important; font-weight: 600; text-decoration: underline !important; text-underline-offset: 4px; }
+        details { transition: all 0.3s ease-in-out; }
+        details > summary { list-style: none; cursor: pointer; transition: margin 0.3s ease-in-out; }
+        details > summary::-webkit-details-marker { display: none; }
+        details summary::before { content: '+'; margin-right: 0.5rem; font-weight: bold; display: inline-block; transition: transform 0.3s ease-in-out; }
+        details[open] summary::before { transform: rotate(45deg); }
+        details[open] > summary { margin-bottom: 0.5rem; }
+        details p, details div, details ul, details table { overflow: hidden; opacity: 0; transform: translateY(-10px); transition: opacity 0.3s ease-out, transform 0.3s ease-out; padding-left: 1.5rem; }
+        details[open] p, details[open] div, details[open] ul, details[open] table { opacity: 1; transform: translateY(0); }
+
+        /* ESTILOS WIDGET ESCOLA: CONTAGEM REGRESSIVA */
+        .esc-countdown-container {
+            background: radial-gradient(circle at center, #f8f9fa 0%, #e5e7eb 100%);
+        }
+        .auvp-glass-card-countdown {
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); border-radius: 12px;
+        }
+
+        /* ESTILOS WIDGET CAPITAL: CALCULADORA (VERDE) */
+        .cap-calc-wrapper input[type=range] { -webkit-appearance: none; width: 100%; height: .5rem; border-radius: .25rem; background: #d1d5db; outline: 0; cursor: pointer; accent-color: #023619; }
+        .cap-calc-wrapper input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: #023619; border: 3px solid #fff; box-shadow: 0 0 3px rgba(0, 0, 0, .25); position: relative; z-index: 2; }
+        .cap-calc-wrapper input[type=range]::-moz-range-thumb { width: 1.25rem; height: 1.25rem; border-radius: 50%; background: #023619; border: 3px solid #fff; box-shadow: 0 0 3px rgba(0, 0, 0, .25); cursor: pointer; }
+        
+        /* ESTILOS WIDGET ESCOLA: CALCULADORA (GOLD) */
+        .esc-calc-wrapper input[type=range] { -webkit-appearance: none; width: 100%; height: .5rem; border-radius: .25rem; background: #d1d5db; outline: 0; cursor: pointer; accent-color: #efbf4e; }
+        .esc-calc-wrapper input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: #efbf4e; border: 3px solid #fff; box-shadow: 0 0 3px rgba(0, 0, 0, .25); position: relative; z-index: 2; }
+        .esc-calc-wrapper input[type=range]::-moz-range-thumb { width: 1.25rem; height: 1.25rem; border-radius: 50%; background: #efbf4e; border: 3px solid #fff; box-shadow: 0 0 3px rgba(0, 0, 0, .25); cursor: pointer; }
+        
+        .custom-slider-popup {
+            position: absolute; left: 0; transform: translate(calc(-100% - 12px), -50%);
+            color: #1f2937; padding: 0.4rem 0.75rem; font-size: 0.75rem; font-weight: 500;
+            border-radius: 0.5rem; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); z-index: 5; opacity: 0;
+            pointer-events: none; white-space: nowrap; transition: opacity 0.3s ease;
+        }
+        .custom-slider-popup.show { opacity: 1; }
+        
+        .cap-popup { background: #023619; color: white; }
+        .cap-popup::after { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 6px; border-style: solid; border-color: transparent transparent transparent #023619; }
+        
+        .esc-popup { background: #efbf4e; color: #1f2937; }
+        .esc-popup::after { content: ''; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); border-width: 6px; border-style: solid; border-color: transparent transparent transparent #efbf4e; }
+
+    </style>
+</head>
+<body class="flex min-h-screen">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="w-72 bg-gray-50 border-r border-gray-200 fixed h-full overflow-y-auto flex flex-col z-20">
+        
+        <!-- Toggle de Marca (Brand Selector) -->
+        <div class="p-6 border-b border-gray-200">
+            <div class="relative group cursor-pointer" id="brand-selector" onclick="toggleBrandDropdown(event)">
+                <div class="flex items-center justify-between bg-white border border-gray-200 rounded-xl p-2 shadow-sm hover:border-gray-400 transition-colors">
+                    <div class="flex items-center gap-2">
+                        <div id="brand-icon" class="w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center text-white font-bold font-anek">C</div>
+                        <span class="font-bold text-lg tracking-tight font-anek text-gray-900" id="brand-name">AUVP Capital</span>
+                    </div>
+                    <i class="ph ph-caret-down text-gray-400 mr-1"></i>
+                </div>
+                <!-- Dropdown -->
+                <div id="brand-dropdown" class="absolute top-full left-0 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg hidden flex-col overflow-hidden z-50">
+                    <div class="p-3 hover:bg-gray-50 flex items-center gap-3 transition-colors" onclick="setBrand('capital', event)">
+                        <div class="w-6 h-6 bg-brand-green rounded flex items-center justify-center text-white font-bold font-anek text-xs">C</div>
+                        <span class="font-bold text-sm font-anek">AUVP Capital</span>
+                    </div>
+                    <div class="p-3 hover:bg-gray-50 flex items-center gap-3 transition-colors border-t border-gray-100" onclick="setBrand('escola', event)">
+                        <div class="w-6 h-6 bg-brand-gold rounded flex items-center justify-center text-gray-900 font-bold font-anek text-xs">E</div>
+                        <span class="font-bold text-sm font-anek">AUVP Escola</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toggle de Visão do Sistema -->
+        <div class="p-4 border-b border-gray-200 bg-gray-100/50">
+            <div class="bg-gray-200/50 p-1 rounded-lg flex relative border border-gray-200 shadow-inner overflow-hidden">
+                <!-- Slider Background (Dynamic Width via JS) -->
+                <div id="view-slider" class="absolute top-1 bottom-1 bg-white rounded-md shadow-sm transition-all duration-300 ease-in-out border border-gray-200/50" style="left: 4px; width: calc(50% - 8px);"></div>
+                
+                <button onclick="setSystemView('institucional')" id="btn-view-inst" class="flex-1 py-1.5 text-[10px] tracking-wide font-bold uppercase relative z-10 transition-colors text-gray-900">
+                    Sites
+                </button>
+                <button onclick="setSystemView('ferramentas')" id="btn-view-tool" class="flex-1 py-1.5 text-[10px] tracking-wide font-bold uppercase relative z-10 transition-colors text-gray-500 hover:text-gray-700">
+                    Ferramentas
+                </button>
+                <!-- Terceira visão: Plataforma (Apenas Escola) -->
+                <button onclick="setSystemView('plataforma')" id="btn-view-plat" class="flex-1 py-1.5 text-[10px] tracking-wide font-bold uppercase relative z-10 transition-colors text-gray-500 hover:text-gray-700 hidden">
+                    Aulas
+                </button>
+            </div>
+        </div>
+
+        <!-- Menu Items -->
+        <nav class="flex-1 p-4 space-y-8" id="main-nav">
+            
+            <!-- Categoria: Geral (Aparece para ambas as marcas) -->
+            <div class="nav-category" data-brand="all" data-view="all">
+                <h4 class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Geral</h4>
+                <ul class="space-y-1">
+                    <li>
+                        <button onclick="setActiveTab('intro')" id="tab-intro" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors bg-white text-green-800 shadow-sm ring-1 ring-gray-200">
+                            <i class="ph ph-info text-[18px]"></i>
+                            <span>Introdução</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="setActiveTab('brand')" id="tab-brand" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900">
+                            <i class="ph ph-download-simple text-[18px]"></i>
+                            <span>Marca & Logos</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="setActiveTab('icons')" id="tab-icons" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900">
+                            <i class="ph ph-star text-[18px]"></i>
+                            <span>Ícones</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="setActiveTab('ai_food')" id="tab-ai_food" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-dashed border-gray-300 mt-2">
+                            <i class="ph ph-robot text-[18px]"></i>
+                            <span>AI-Food (Prompt)</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- MENUS AUVP CAPITAL                             -->
+            <!-- ============================================== -->
+            <div class="nav-category" data-brand="capital" data-view="institucional">
+                <h4 class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Sites & LPs</h4>
+                <ul class="space-y-1">
+                    <li><button onclick="setActiveTab('cap_inst_typo')" id="tab-cap_inst_typo" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-text-aa text-[18px]"></i><span>Tipografia</span></button></li>
+                    <li><button onclick="setActiveTab('cap_inst_color')" id="tab-cap_inst_color" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-palette text-[18px]"></i><span>Cores</span></button></li>
+                    <li><button onclick="setActiveTab('cap_inst_layout')" id="tab-cap_inst_layout" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-layout text-[18px]"></i><span>Layout & Espaçamento</span></button></li>
+                    <li><button onclick="setActiveTab('cap_inst_cards')" id="tab-cap_inst_cards" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-package text-[18px]"></i><span>Cards & Containers</span></button></li>
+                    <li><button onclick="setActiveTab('cap_inst_buttons')" id="tab-cap_inst_buttons" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-cursor text-[18px]"></i><span>Botões</span></button></li>
+                    <li><button onclick="setActiveTab('cap_inst_grid')" id="tab-cap_inst_grid" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-squares-four text-[18px]"></i><span>Grade Curricular</span></button></li>
+                    <li><button onclick="setActiveTab('cap_inst_countdown')" id="tab-cap_inst_countdown" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-clock text-[18px]"></i><span>Contagem Regressiva</span></button></li>
+                    <li><button onclick="setActiveTab('cap_inst_adv')" id="tab-cap_inst_adv" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-stack text-[18px]"></i><span>Padrões Avançados</span></button></li>
+                    <li><button onclick="setActiveTab('cap_inst_tips')" id="tab-cap_inst_tips" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-chat-teardrop text-[18px]"></i><span>Tooltips & Popups</span></button></li>
+                    <li><button onclick="setActiveTab('cap_inst_faq')" id="tab-cap_inst_faq" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-question text-[18px]"></i><span>FAQ (Dúvidas)</span></button></li>
+                </ul>
+            </div>
+
+            <div class="nav-category hidden-menu-item" data-brand="capital" data-view="ferramentas">
+                <h4 class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ferramentas</h4>
+                <ul class="space-y-1">
+                    <li><button onclick="setActiveTab('cap_tool_typo')" id="tab-cap_tool_typo" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-text-aa text-[18px]"></i><span>Tipografia</span></button></li>
+                    <li><button onclick="setActiveTab('cap_tool_color')" id="tab-cap_tool_color" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-palette text-[18px]"></i><span>Cores</span></button></li>
+                    <li><button onclick="setActiveTab('cap_tool_cards')" id="tab-cap_tool_cards" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-package text-[18px]"></i><span>Cards & Containers</span></button></li>
+                    <li><button onclick="setActiveTab('cap_tool_buttons')" id="tab-cap_tool_buttons" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-cursor-click text-[18px]"></i><span>Botões & Interações</span></button></li>
+                    <li><button onclick="setActiveTab('cap_tool_tips')" id="tab-cap_tool_tips" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-chat-teardrop text-[18px]"></i><span>Tooltips & Popups</span></button></li>
+                    <li><button onclick="setActiveTab('cap_tool_calc')" id="tab-cap_tool_calc" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-calculator text-[18px]"></i><span>Calculadora AUVP Capital</span></button></li>
+                </ul>
+            </div>
+
+            <!-- ============================================== -->
+            <!-- MENUS AUVP ESCOLA                              -->
+            <!-- ============================================== -->
+            <div class="nav-category hidden-menu-item" data-brand="escola" data-view="institucional">
+                <h4 class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Sites & LPs</h4>
+                <ul class="space-y-1">
+                    <li><button onclick="setActiveTab('esc_inst_typo')" id="tab-esc_inst_typo" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-text-aa text-[18px]"></i><span>Tipografia</span></button></li>
+                    <li><button onclick="setActiveTab('esc_inst_color')" id="tab-esc_inst_color" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-palette text-[18px]"></i><span>Cores</span></button></li>
+                    <li><button onclick="setActiveTab('esc_inst_layout')" id="tab-esc_inst_layout" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-layout text-[18px]"></i><span>Layout & Espaçamento</span></button></li>
+                    <li><button onclick="setActiveTab('esc_inst_cards')" id="tab-esc_inst_cards" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-package text-[18px]"></i><span>Cards & Containers</span></button></li>
+                    <li><button onclick="setActiveTab('esc_inst_buttons')" id="tab-esc_inst_buttons" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-cursor text-[18px]"></i><span>Botões</span></button></li>
+                    <li><button onclick="setActiveTab('esc_inst_grid')" id="tab-esc_inst_grid" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-squares-four text-[18px]"></i><span>Grade Curricular</span></button></li>
+                    <li><button onclick="setActiveTab('esc_inst_countdown')" id="tab-esc_inst_countdown" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-clock text-[18px]"></i><span>Contagem Regressiva</span></button></li>
+                    <li><button onclick="setActiveTab('esc_inst_adv')" id="tab-esc_inst_adv" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-stack text-[18px]"></i><span>Padrões Avançados</span></button></li>
+                    <li><button onclick="setActiveTab('esc_inst_tips')" id="tab-esc_inst_tips" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-chat-teardrop text-[18px]"></i><span>Tooltips & Popups</span></button></li>
+                    <li><button onclick="setActiveTab('esc_inst_faq')" id="tab-esc_inst_faq" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-question text-[18px]"></i><span>FAQ (Dúvidas)</span></button></li>
+                </ul>
+            </div>
+
+            <div class="nav-category hidden-menu-item" data-brand="escola" data-view="ferramentas">
+                <h4 class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ferramentas</h4>
+                <ul class="space-y-1">
+                    <li><button onclick="setActiveTab('esc_tool_typo')" id="tab-esc_tool_typo" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-text-aa text-[18px]"></i><span>Tipografia</span></button></li>
+                    <li><button onclick="setActiveTab('esc_tool_color')" id="tab-esc_tool_color" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-palette text-[18px]"></i><span>Cores</span></button></li>
+                    <li><button onclick="setActiveTab('esc_tool_cards')" id="tab-esc_tool_cards" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-package text-[18px]"></i><span>Cards & Containers</span></button></li>
+                    <li><button onclick="setActiveTab('esc_tool_buttons')" id="tab-esc_tool_buttons" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-cursor-click text-[18px]"></i><span>Botões & Interações</span></button></li>
+                    <li><button onclick="setActiveTab('esc_tool_tips')" id="tab-esc_tool_tips" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-chat-teardrop text-[18px]"></i><span>Tooltips & Popups</span></button></li>
+                    <li><button onclick="setActiveTab('esc_tool_calc')" id="tab-esc_tool_calc" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-calculator text-[18px]"></i><span>Calculadora AUVP Escola</span></button></li>
+                </ul>
+            </div>
+
+            <!-- Terceira Visão: Plataforma EAD -->
+            <div class="nav-category hidden-menu-item" data-brand="escola" data-view="plataforma">
+                <h4 class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Plataforma de Aulas</h4>
+                <ul class="space-y-1">
+                    <li><button onclick="setActiveTab('esc_plat_color')" id="tab-esc_plat_color" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-palette text-[18px]"></i><span>Cores & Dark Mode</span></button></li>
+                    <li><button onclick="setActiveTab('esc_plat_courses')" id="tab-esc_plat_courses" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-books text-[18px]"></i><span>Visualização de Cursos</span></button></li>
+                    <li><button onclick="setActiveTab('esc_plat_player')" id="tab-esc_plat_player" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-video-camera text-[18px]"></i><span>Video Player</span></button></li>
+                    <li><button onclick="setActiveTab('esc_plat_sidebar')" id="tab-esc_plat_sidebar" class="nav-btn w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:bg-gray-100"><i class="ph ph-list-dashes text-[18px]"></i><span>Lista de Aulas</span></button></li>
+                </ul>
+            </div>
+
+        </nav>
+
+        <!-- Footer da Sidebar -->
+        <div class="p-4 border-t border-gray-200 mt-auto">
+            <div class="bg-gray-900 rounded-lg p-3 text-white">
+                <p class="text-xs font-medium text-gray-400 mb-1">Filtro Ativo:</p>
+                <p id="active-view-label" class="font-mono text-sm leading-tight text-green-400">Capital > Sites</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 ml-72 p-8 lg:p-12 max-w-5xl mx-auto w-full">
+        
+        <div id="content-area" class="fade-in">
+
+            <!-- ============================================== -->
+            <!-- GERAL: INTRO, BRAND, ICONS, AI-FOOD            -->
+            <!-- ============================================== -->
+            <section id="sec-intro" class="content-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Bem-vindo ao Design System AUVP</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Este documento consolida as diretrizes visuais para o ecossistema digital da AUVP. Use o seletor de marca (canto superior esquerdo) e as abas abaixo para explorar.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8" id="intro-grid">
+                    <div onclick="setSystemView('institucional')" id="intro-card-inst" class="bg-gray-50 p-8 rounded-2xl border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer hover:border-gray-300 flex flex-col h-full group">
+                        <div id="intro-icon-inst" class="w-12 h-12 bg-gray-900 rounded-full flex items-center justify-center mb-6 text-white shrink-0">
+                            <i class="ph ph-layout text-[24px]"></i>
+                        </div>
+                        <h3 id="intro-title-inst" class="text-2xl font-bold mb-3 font-anek group-hover:text-green-800 transition-colors">Sites & LPs</h3>
+                        <p class="text-gray-600 mb-4">Websites, Landing Pages e Portais de atração.</p>
+                        <ul class="space-y-2 text-sm text-gray-500 mb-8" id="intro-list-inst">
+                            <li class="flex items-center"><i class="ph ph-caret-right text-green-700 mr-2 intro-bullet-inst"></i> Padrão Claro/Escuro</li>
+                            <li class="flex items-center"><i class="ph ph-caret-right text-green-700 mr-2 intro-bullet-inst"></i> Tipografia Anek & Roboto</li>
+                            <li class="flex items-center"><i class="ph ph-caret-right text-green-700 mr-2 intro-bullet-inst"></i> Widgets de Escassez</li>
+                        </ul>
+                        <span id="intro-link-inst" class="text-sm font-bold text-gray-900 flex items-center mt-auto pt-4 border-t border-gray-200 group-hover:text-green-800 transition-colors">
+                            Acessar visão <i class="ph ph-caret-right ml-1"></i>
+                        </span>
+                    </div>
+
+                    <div onclick="setSystemView('ferramentas')" id="intro-card-tool" class="bg-green-50 p-8 rounded-2xl border border-green-100 hover:shadow-lg transition-shadow cursor-pointer hover:border-green-200 flex flex-col h-full group">
+                        <div id="intro-icon-tool" class="w-12 h-12 bg-brand-green rounded-full flex items-center justify-center mb-6 text-white shrink-0">
+                            <i class="ph ph-calculator text-[24px]"></i>
+                        </div>
+                        <h3 id="intro-title-tool" class="text-2xl font-bold mb-3 font-anek group-hover:text-green-900 transition-colors">Ferramentas (Tools)</h3>
+                        <p class="text-gray-600 mb-4">Calculadoras, Simuladores e Dashboards.</p>
+                        <ul class="space-y-2 text-sm text-gray-500 mb-8" id="intro-list-tool">
+                            <li class="flex items-center"><i class="ph ph-caret-right text-green-700 mr-2 intro-bullet-tool"></i> Estilo Fintech Clean</li>
+                            <li class="flex items-center"><i class="ph ph-caret-right text-green-700 mr-2 intro-bullet-tool"></i> Cards Arredondados</li>
+                            <li class="flex items-center"><i class="ph ph-caret-right text-green-700 mr-2 intro-bullet-tool"></i> Formulários e Sliders</li>
+                        </ul>
+                        <span id="intro-link-tool" class="text-sm font-bold text-green-800 flex items-center mt-auto pt-4 border-t border-green-200/50 group-hover:text-green-900 transition-colors">
+                            Acessar visão <i class="ph ph-caret-right ml-1"></i>
+                        </span>
+                    </div>
+
+                    <div onclick="setSystemView('plataforma')" id="intro-card-plat" class="bg-amber-50 p-8 rounded-2xl border border-yellow-200 hover:shadow-xl transition-shadow cursor-pointer hover:border-yellow-300 flex-col h-full group hidden">
+                        <div id="intro-icon-plat" class="w-12 h-12 bg-brand-gold rounded-full flex items-center justify-center mb-6 text-zinc-900 shrink-0">
+                            <i class="ph ph-monitor-play text-[24px] font-bold"></i>
+                        </div>
+                        <h3 id="intro-title-plat" class="text-2xl font-bold mb-3 font-anek text-gray-900 group-hover:text-yellow-700 transition-colors">Plataforma EAD</h3>
+                        <p class="text-gray-600 mb-4">Área logada do aluno, player de vídeo e módulos.</p>
+                        <ul class="space-y-2 text-sm text-gray-500 mb-8" id="intro-list-plat">
+                            <li class="flex items-center"><i class="ph ph-caret-right text-yellow-600 mr-2"></i> Padrão Claro Principal</li>
+                            <li class="flex items-center"><i class="ph ph-caret-right text-yellow-600 mr-2"></i> Dark Mode (Alternativo)</li>
+                            <li class="flex items-center"><i class="ph ph-caret-right text-yellow-600 mr-2"></i> Acentos em Dourado</li>
+                        </ul>
+                        <span id="intro-link-plat" class="text-sm font-bold text-yellow-700 flex items-center mt-auto pt-4 border-t border-yellow-200/50 group-hover:text-yellow-800 transition-colors">
+                            Acessar visão <i class="ph ph-caret-right ml-1"></i>
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-brand" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Geral</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Marca & Logos</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Repositório oficial das aplicações da marca. Utilize sempre os arquivos originais sem distorções.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="border border-dashed border-gray-300 rounded-xl p-12 flex flex-col items-center justify-center bg-gray-50">
+                        <div class="h-16 w-48 bg-gray-200 rounded flex items-center justify-center text-gray-500 font-mono text-[11px] font-bold mb-4 border border-dashed border-gray-400">[Imagem: Logo Principal Horizontal]</div>
+                        <span class="text-sm text-gray-500">Uso preferencial em fundos claros</span>
+                    </div>
+                    <div class="border border-dashed border-gray-300 rounded-xl p-12 flex flex-col items-center justify-center bg-black">
+                        <div class="h-16 w-48 bg-white/10 rounded flex items-center justify-center text-gray-400 font-mono text-[11px] font-bold mb-4 border border-dashed border-gray-600">[Imagem: Logo Principal Negativo]</div>
+                        <span class="text-sm text-gray-500">Uso preferencial em fundos escuros</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NOVO: Secção de Ícones -->
+            <section id="sec-icons" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Geral</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Biblioteca de Ícones</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Em todo o ecossistema AUVP utilizamos a biblioteca <strong>Phosphor Icons</strong>. Ela garante consistência visual, familiaridade cognitiva e permite múltiplas variações sem esforço extra.</p>
+                </div>
+                
+                <div class="space-y-12">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek">Pesos e Variações (Weights)</h3>
+                        <p class="text-gray-600 mb-4">A biblioteca permite alternar entre estilos apenas mudando o prefixo da classe do ícone. O padrão do design system é o <em>Regular</em>, usando <em>Fill</em> para interações de estado ativo ou vídeos.</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div class="bg-gray-50 border border-gray-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3">
+                                <i class="ph ph-play-circle text-4xl text-gray-800"></i>
+                                <span class="font-mono text-xs text-gray-500 font-bold">ph (Regular)</span>
+                            </div>
+                            <div class="bg-gray-50 border border-gray-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3">
+                                <i class="ph-fill ph-play-circle text-4xl text-gray-800"></i>
+                                <span class="font-mono text-xs text-gray-500 font-bold">ph-fill</span>
+                            </div>
+                            <div class="bg-gray-50 border border-gray-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3">
+                                <i class="ph-bold ph-play-circle text-4xl text-gray-800"></i>
+                                <span class="font-mono text-xs text-gray-500 font-bold">ph-bold</span>
+                            </div>
+                            <div class="bg-gray-50 border border-gray-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3">
+                                <i class="ph-duotone ph-play-circle text-4xl text-gray-800"></i>
+                                <span class="font-mono text-xs text-gray-500 font-bold">ph-duotone</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek">Implementação e Referência</h3>
+                        <p class="text-gray-600 mb-4">Os ícones já estão importados via CDN no cabeçalho do projeto. Basta usar a tag <code>&lt;i&gt;</code> e adicionar tamanhos/cores através de utilitários do Tailwind (ex: <code>text-3xl</code>).</p>
+                        
+                        <a href="https://phosphoricons.com/" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-sora font-bold text-sm uppercase rounded hover:bg-gray-800 transition-colors mb-6">
+                            Acessar Catálogo Phosphor <i class="ph ph-arrow-square-out"></i>
+                        </a>
+
+                        <div class="bg-slate-900 rounded-lg overflow-hidden relative group border border-slate-800">
+                            <div class="p-4 overflow-x-auto"><code class="text-green-400 font-mono text-sm whitespace-pre">&lt;!-- Exemplo de uso com Tailwind --&gt;
+&lt;i class="ph ph-rocket-launch text-[#023619] text-3xl"&gt;&lt;/i&gt;
+
+&lt;!-- Exemplo versão Fill (Ativa) --&gt;
+&lt;i class="ph-fill ph-play-circle text-[#efbf4e] text-2xl"&gt;&lt;/i&gt;</code></div>
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity" title="Copiar"><i class="ph ph-copy"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-ai_food" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Geral</span>
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="ph ph-robot text-[40px] text-gray-900"></i>
+                        <h1 class="text-4xl font-bold text-gray-900 font-anek">AI-Food (Prompt Builder)</h1>
+                    </div>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Este espaço gera automaticamente um Master Prompt para a IA baseado na <strong class="text-gray-900" id="ai-food-brand-label">AUVP Capital</strong> e na visão de <strong class="text-gray-900" id="ai-food-view-label">Sites & LPs</strong> ativa. Copie o texto abaixo e cole no ChatGPT, Claude ou Cursor.</p>
+                </div>
+                <div class="bg-slate-900 rounded-xl overflow-hidden relative group border border-slate-800 shadow-xl">
+                    <div class="p-6 overflow-x-auto">
+                        <textarea id="ai-prompt-textarea" readonly class="w-full h-[500px] bg-transparent text-green-400 font-mono text-[13px] leading-relaxed resize-none outline-none hide-scrollbar selection:bg-green-400/30 selection:text-white" spellcheck="false"></textarea>
+                    </div>
+                    <div class="absolute top-4 right-4 flex gap-2">
+                        <button onclick="copyAiPrompt(this)" class="px-4 py-2 bg-white text-slate-900 text-sm font-bold rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2 shadow-lg">
+                            <i class="ph ph-copy text-lg"></i> Copiar Prompt
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================== -->
+            <!-- AUVP CAPITAL - INSTITUCIONAL E FERRAMENTAS     -->
+            <!-- (Mantidos inalterados conforme requisitado)    -->
+            <!-- ============================================== -->
+            <section id="sec-cap_inst_typo" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Tipografia</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">A tipografia da AUVP Capital combina a modernidade da Anek Latin para títulos com a legibilidade da Roboto para textos longos.</p>
+                </div>
+                <div class="space-y-12">
+                    <h3 class="text-xl font-bold font-anek border-b pb-2">Comportamento em Fundo Claro</h3>
+                    <div class="bg-white p-8 border border-gray-200 rounded-xl space-y-8 shadow-sm">
+                        <div><span class="text-sm font-mono text-gray-400">H1 - Anek Latin - 54px (Verde Escuro)</span><h1 class="font-anek text-[54px] leading-tight font-bold text-[#023619]">A Única Verdade Possível</h1></div>
+                        <div><span class="text-sm font-mono text-gray-400">H2 - Anek Latin - 41px - SemiBold (Verde Escuro)</span><h2 class="font-anek text-[41px] leading-tight font-semibold text-[#023619]">Construindo patrimônio sólido</h2></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div><span class="text-sm font-mono text-gray-400 block mb-2">Subtítulos - Roboto - 20px</span><h3 class="font-roboto text-[20px] font-normal text-gray-800">O método definitivo de investimentos.</h3></div>
+                            <div><span class="text-sm font-mono text-gray-400 block mb-2">Texto Corrido - Roboto - 17px</span><p class="font-roboto text-[17px] leading-relaxed text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</p></div>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold font-anek border-b pb-2 mt-12">Comportamento em Fundo Escuro</h3>
+                    <div class="bg-black p-8 border border-gray-800 rounded-xl space-y-8 shadow-lg">
+                        <div><span class="text-sm font-mono text-gray-500">H1 - Anek Latin - 54px (Branco #FFFFFF)</span><h1 class="font-anek text-[54px] leading-tight font-bold text-white">A Única Verdade Possível</h1></div>
+                        <div><span class="text-sm font-mono text-gray-500">H2 - Anek Latin - 41px - SemiBold (Branco ou Amarelo)</span><h2 class="font-anek text-[41px] leading-tight font-semibold text-white mb-2">Construindo patrimônio sólido</h2><h2 class="font-anek text-[41px] leading-tight font-semibold text-[#EFBE4F]">Variação Amarela (#EFBE4F)</h2></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div><span class="text-sm font-mono text-gray-500 block mb-2">Subtítulos - Roboto - 20px</span><h3 class="font-roboto text-[20px] font-normal text-white">O método definitivo de investimentos.</h3></div>
+                            <div><span class="text-sm font-mono text-gray-500 block mb-2">Texto Corrido - Roboto - 17px</span><p class="font-roboto text-[17px] leading-relaxed text-gray-300">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_inst_color" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Cores</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">A paleta institucional é sóbria e contrastante, alternando entre fundos muito claros e muito escuros.</p>
+                </div>
+                <h3 class="text-lg font-bold mb-4 font-anek">Cores Primárias</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #023619"><span class="font-mono text-sm text-white">#023619</span></div><div><h4 class="font-semibold text-gray-900">Verde Institucional</h4></div></div>
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #000000"><span class="font-mono text-sm text-white">#000000</span></div><div><h4 class="font-semibold text-gray-900">Preto Puro</h4></div></div>
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3 border border-gray-200" style="background-color: #FFFFFF"><span class="font-mono text-sm text-gray-900">#FFFFFF</span></div><div><h4 class="font-semibold text-gray-900">Branco Puro</h4></div></div>
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #EFBE4F"><span class="font-mono text-sm text-gray-900">#EFBE4F</span></div><div><h4 class="font-semibold text-gray-900">Amarelo Acento</h4></div></div>
+                </div>
+                <h3 class="text-lg font-bold mb-4 font-anek">Cores de Suporte e Fundo</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #F2F2F2"><span class="font-mono text-sm text-gray-900">#F2F2F2</span></div><div><h4 class="font-semibold text-gray-900">Cinza Claro (Fundo)</h4></div></div>
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #1B1B1B"><span class="font-mono text-sm text-white">#1B1B1B</span></div><div><h4 class="font-semibold text-gray-900">Cinza Chumbo (Cards)</h4></div></div>
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #333333"><span class="font-mono text-sm text-white">#333333</span></div><div><h4 class="font-semibold text-gray-900">Cinza Escuro (Texto)</h4></div></div>
+                </div>
+                <div class="mt-12 bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-400">
+                    <h4 class="font-bold text-yellow-800 mb-2">Regra de Alternância</h4>
+                    <p class="text-sm text-yellow-800">As dobras (sections) devem alternar obrigatoriamente entre <strong>Branco Puro (#FFFFFF)</strong> e <strong>Cinza Claro (#F2F2F2)</strong>. Dobras de destaque devem usar <strong>Preto Puro (#000000)</strong>.</p>
+                </div>
+            </section>
+
+            <section id="sec-cap_inst_layout" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Layout & Espaçamento</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">O ritmo vertical e o alinhamento seguem uma lógica matemática consistente baseada em múltiplos de 15px nas LPs da Capital.</p>
+                </div>
+                <div class="space-y-12">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <h3 class="text-lg font-bold mb-4 font-anek">Breakpoints e Containers</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b pb-2"><span class="font-mono text-gray-500">Desktop</span><span class="font-bold text-gray-900">1200px</span></div>
+                            <div class="flex items-center justify-between border-b pb-2"><span class="font-mono text-gray-500">Tablet</span><span class="font-bold text-gray-900">720px</span></div>
+                            <div class="flex items-center justify-between"><span class="font-mono text-gray-500">Mobile</span><span class="font-bold text-gray-900">320px</span></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-lg font-bold mb-4 font-anek">Espaçamento Vertical (Dobras)</h3>
+                            <div class="flex flex-col gap-0 border border-gray-300 rounded overflow-hidden max-w-md bg-gray-100">
+                                <div class="bg-white h-20 flex items-center justify-center text-gray-400">Conteúdo Dobra A</div>
+                                <div class="h-[60px] bg-red-100 w-full flex items-center justify-center text-red-500 text-xs font-mono font-bold border-y border-red-200 stripes" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,0,0,0.05) 10px, rgba(255,0,0,0.05) 20px);">60px Padding (Múltiplo de 15)</div>
+                                <div class="bg-white h-20 flex items-center justify-center text-gray-400">Conteúdo Dobra B</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-4 font-anek">Regra dos 15px (Gaps & Margins)</h3>
+                            <div class="bg-white p-6 border border-gray-200 rounded-xl flex flex-col gap-[15px]">
+                                <div class="bg-gray-100 h-10 w-full flex items-center justify-center text-xs text-gray-500 border border-dashed border-gray-300">Elemento 1</div>
+                                <div class="h-[15px] bg-blue-100 flex items-center justify-center text-blue-500 text-[10px] font-mono font-bold">15px Gap</div>
+                                <div class="bg-gray-100 h-10 w-full flex items-center justify-center text-xs text-gray-500 border border-dashed border-gray-300">Elemento 2</div>
+                                <div class="h-[30px] bg-blue-100 flex items-center justify-center text-blue-500 text-[10px] font-mono font-bold">30px Gap</div>
+                                <div class="bg-gray-100 h-10 w-full flex items-center justify-center text-xs text-gray-500 border border-dashed border-gray-300">Elemento 3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="sec-cap_inst_cards" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Cards & Containers</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Regras para criar cards, caixas ou áreas destacadas dentro de uma dobra principal institucional.</p>
+                </div>
+                <div class="mb-8 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                    <h4 class="font-bold text-yellow-800 text-sm mb-1">Regra de Ouro</h4>
+                    <p class="text-sm text-yellow-800">Sempre utilizar <strong>Border Radius: 12px</strong> e manter o contraste <strong>baixo</strong> em relação ao fundo da dobra.</p>
+                </div>
+                <div class="grid grid-cols-1 gap-12">
+                    <div class="bg-black p-8 rounded-xl border border-gray-800 shadow-xl">
+                        <h3 class="text-white font-anek text-2xl font-bold mb-6">Dobra Escura (Preto Puro)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-[15px]">
+                            <div class="bg-[#1B1B1B] p-6 rounded-[12px] border border-white/5">
+                                <span class="text-[#EFBE4F] text-sm font-bold uppercase tracking-wider mb-2 block">Destaque</span>
+                                <h4 class="text-white font-roboto text-xl font-bold mb-2">Fundo Cinza Chumbo</h4>
+                            </div>
+                            <div class="bg-[#1B1B1B] p-6 rounded-[12px] border border-white/5">
+                                <span class="text-[#EFBE4F] text-sm font-bold uppercase tracking-wider mb-2 block">Vantagem</span>
+                                <h4 class="text-white font-roboto text-xl font-bold mb-2">Baixo Contraste</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-[#F2F2F2] p-8 rounded-xl border border-gray-200">
+                        <h3 class="text-[#023619] font-anek text-2xl font-bold mb-6">Dobra Cinza Claro</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-[15px]">
+                            <div class="bg-white p-6 rounded-[12px] shadow-sm border border-black/5">
+                                <span class="text-[#023619] text-sm font-bold uppercase tracking-wider mb-2 block">Destaque</span>
+                                <h4 class="text-gray-900 font-roboto text-xl font-bold mb-2">Fundo Branco Puro</h4>
+                            </div>
+                            <div class="bg-white p-6 rounded-[12px] shadow-sm border border-black/5">
+                                <span class="text-[#023619] text-sm font-bold uppercase tracking-wider mb-2 block">Tipografia</span>
+                                <h4 class="text-gray-900 font-roboto text-xl font-bold mb-2">Hierarquia</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_inst_buttons" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Botões</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Botões utilizados em Landing Pages e sites principais. Diferem visualmente dos botões arredondados de ferramentas.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="bg-gray-50 p-8 rounded-xl border border-gray-200">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400 mb-6">Em Fundo Claro</h3>
+                        <div class="space-y-8">
+                            <div><span class="text-xs text-gray-500 mb-2 block">Default (Repouso)</span><button class="bg-[#023619] text-white font-sora font-bold uppercase px-8 py-[18px] min-w-[150px] rounded-none hover:bg-transparent hover:text-[#023619] border border-[#023619] transition-all duration-300">Inscreva-se Agora</button></div>
+                            <div><span class="text-xs text-gray-500 mb-2 block">Hover (Simulação)</span><button class="bg-transparent text-[#023619] border border-[#023619] font-sora font-bold uppercase px-8 py-[18px] min-w-[150px] rounded-none">Inscreva-se Agora</button></div>
+                        </div>
+                    </div>
+                    <div class="bg-black p-8 rounded-xl border border-gray-800">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-6">Em Fundo Escuro</h3>
+                        <div class="space-y-8">
+                            <div><span class="text-xs text-gray-500 mb-2 block">Default (Repouso)</span><button class="bg-transparent text-white border border-white font-sora font-bold uppercase px-8 py-[18px] min-w-[150px] rounded-none hover:bg-white hover:text-[#023619] transition-all duration-300">Começar</button></div>
+                            <div><span class="text-xs text-gray-500 mb-2 block">Hover (Simulação)</span><button class="bg-white text-[#023619] border border-white font-sora font-bold uppercase px-8 py-[18px] min-w-[150px] rounded-none">Começar</button></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <h4 class="font-bold text-gray-900 mb-2">Especificações Técnicas</h4>
+                    <ul class="list-disc list-inside text-gray-600 space-y-1">
+                        <li><strong>Fonte:</strong> Sora (Google Fonts)</li>
+                        <li><strong>Peso:</strong> Bold (700)</li>
+                        <li><strong>Transform:</strong> Uppercase</li>
+                        <li><strong>Border Radius:</strong> 0px (Bordas Retas)</li>
+                        <li><strong>Dimensões:</strong> 18px Vertical | 150px Horizontal (mínimo)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="sec-cap_inst_grid" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Grade Curricular</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Adaptação do widget de cursos para as regras da Capital: Fundo sólido, border-radius de 12px e tags verdes retas.</p>
+                </div>
+                <div class="bg-[#F2F2F2] p-4 md:p-8 rounded-2xl overflow-hidden relative border border-gray-200">
+                    <div class="text-center mb-10">
+                        <h2 class="text-[#023619] font-anek font-semibold text-3xl md:text-[41px] mb-4 leading-tight">Grade Curricular Sólida</h2>
+                    </div>
+                    <div class="flex overflow-x-auto snap-x snap-mandatory gap-5 pb-6 hide-scrollbar">
+                        <div class="flex-shrink-0 w-[85vw] max-w-[320px] snap-center">
+                            <div class="bg-white border border-gray-200 rounded-[12px] overflow-hidden shadow-sm h-full flex flex-col hover:-translate-y-2 transition-transform hover:border-[#023619]">
+                                <div class="h-[180px] bg-gray-200 border-b border-gray-200 flex items-center justify-center text-gray-500 font-mono text-sm">[Imagem: Capa do Módulo]</div>
+                                <div class="p-6 flex flex-col flex-grow">
+                                    <span class="font-sora text-[10px] font-bold text-white uppercase bg-[#023619] px-2.5 py-1 rounded-none w-fit mb-3 tracking-wider">Módulo 01</span>
+                                    <h3 class="text-gray-900 font-anek font-bold text-xl mb-3 leading-[1.3]">Estrutura Financeira</h3>
+                                    <p class="text-gray-600 font-roboto text-[0.95rem] leading-relaxed">Aprenda a construir patrimônio de forma sólida e consistente.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0 w-[85vw] max-w-[320px] snap-center">
+                            <div class="bg-white border border-gray-200 rounded-[12px] overflow-hidden shadow-sm h-full flex flex-col hover:-translate-y-2 transition-transform hover:border-[#023619]">
+                                <div class="h-[180px] bg-gray-200 border-b border-gray-200 flex items-center justify-center text-gray-500 font-mono text-sm">[Imagem: Capa do Módulo]</div>
+                                <div class="p-6 flex flex-col flex-grow">
+                                    <span class="font-sora text-[10px] font-bold text-white uppercase bg-[#023619] px-2.5 py-1 rounded-none w-fit mb-3 tracking-wider">Módulo 02</span>
+                                    <h3 class="text-gray-900 font-anek font-bold text-xl mb-3 leading-[1.3]">Renda Fixa Prática</h3>
+                                    <p class="text-gray-600 font-roboto text-[0.95rem] leading-relaxed">Títulos, CDBs, marcação a mercado e estratégias de alocação.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_inst_countdown" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Contagem Regressiva</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Adaptação do widget de escassez utilizando a paleta Green da AUVP Capital e elementos sólidos (sem glassmorphism).</p>
+                </div>
+                <div class="bg-[#F2F2F2] p-4 md:p-8 rounded-[12px] relative overflow-hidden border border-gray-200">
+                    <div class="bg-white border border-gray-200 shadow-sm rounded-[12px]">
+                        <div class="flex flex-col items-center justify-center p-8 md:p-16 gap-8">
+                            <div class="text-center z-10 w-full">
+                                <div class="mb-8">
+                                    <span class="inline-block font-sora text-[11px] font-bold text-white uppercase tracking-wider bg-[#023619] px-[14px] py-[6px] rounded-none mb-[15px]">
+                                        Inscrições em breve
+                                    </span>
+                                    <h2 class="text-[#023619] font-anek font-bold text-3xl md:text-4xl lg:text-[41px] m-0 mb-3 leading-tight uppercase tracking-tight">Vagas Limitadas</h2>
+                                    <p class="text-gray-600 font-roboto text-base lg:text-[17px] font-normal max-w-[500px] mx-auto leading-relaxed">O cronômetro indica o tempo exato para você começar a sua jornada. Não perca esta oportunidade.</p>
+                                </div>
+                                <div class="grid grid-cols-4 gap-3 max-w-[540px] mx-auto">
+                                    <div class="bg-white border-2 border-[#023619] rounded-[12px] padding-[15px_5px] text-center flex flex-col py-4"><span class="font-anek text-3xl lg:text-[48px] font-bold text-[#023619] leading-none mb-1">05</span><span class="font-roboto text-[9px] uppercase text-gray-500 font-bold tracking-[1px]">Dias</span></div>
+                                    <div class="bg-white border-2 border-[#023619] rounded-[12px] padding-[15px_5px] text-center flex flex-col py-4"><span class="font-anek text-3xl lg:text-[48px] font-bold text-[#023619] leading-none mb-1">12</span><span class="font-roboto text-[9px] uppercase text-gray-500 font-bold tracking-[1px]">Horas</span></div>
+                                    <div class="bg-white border-2 border-[#023619] rounded-[12px] padding-[15px_5px] text-center flex flex-col py-4"><span class="font-anek text-3xl lg:text-[48px] font-bold text-[#023619] leading-none mb-1">30</span><span class="font-roboto text-[9px] uppercase text-gray-500 font-bold tracking-[1px]">Min</span></div>
+                                    <div class="bg-white border-2 border-[#023619] rounded-[12px] padding-[15px_5px] text-center flex flex-col py-4"><span class="font-anek text-3xl lg:text-[48px] font-bold text-[#023619] leading-none mb-1">45</span><span class="font-roboto text-[9px] uppercase text-gray-500 font-bold tracking-[1px]">Seg</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_inst_adv" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Padrões Avançados</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Componentes dinâmicos de Landing Pages como Timelines e Preços.</p>
+                </div>
+                <div class="space-y-16">
+                    <div>
+                        <h3 class="text-xl font-bold font-anek border-b pb-2 mb-6 text-gray-900">1. Timelines Animadas</h3>
+                        <div class="bg-gray-50 p-12 border border-gray-200 rounded-[12px]">
+                            <div class="relative w-full max-w-2xl mx-auto h-14 flex items-center justify-between mt-12 mb-4 select-none">
+                                <div class="absolute top-1/2 left-4 right-4 h-[3px] -translate-y-1/2 z-0">
+                                    <div class="absolute inset-0 bg-gray-300"></div>
+                                    <div class="absolute inset-y-0 left-0 w-[33%] bg-[#023619] transition-all duration-500"></div>
+                                </div>
+                                <div class="w-6 h-6 border-2 border-[#023619] bg-white rounded-full relative z-10 flex items-center justify-center"><div class="w-3 h-3 bg-[#023619] rounded-full"></div></div>
+                                <div class="w-6 h-6 border-2 border-[#023619] bg-white rounded-full relative z-10 flex items-center justify-center"><div class="w-3 h-3 bg-[#023619] rounded-full"></div></div>
+                                <div class="w-6 h-6 border-2 border-gray-400 bg-white rounded-full relative z-10"></div>
+                                <div class="w-6 h-6 border-2 border-gray-400 bg-white rounded-full relative z-10"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold font-anek border-b pb-2 mb-6 text-gray-900">2. Componentes de Precificação</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div class="bg-white border border-gray-200 shadow-sm rounded-[12px] p-8 relative flex flex-col pt-10">
+                                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#023619] text-white px-5 py-1.5 rounded-none text-[10px] font-sora font-bold uppercase tracking-wider whitespace-nowrap">O Mais Completo</div>
+                                <div class="bg-[#18181b] text-white text-[10px] font-sora font-bold px-3 py-1.5 rounded-none uppercase w-fit mb-4">21% de Desconto</div>
+                                <h4 class="text-2xl font-bold text-[#023619] mb-2 font-anek tracking-tight">Pacote Elite</h4>
+                                <div class="mb-6">
+                                    <span class="text-4xl font-bold text-gray-900 font-anek tracking-tight">R$ 2.199,00</span>
+                                </div>
+                                <ul class="space-y-3 mb-8 flex-grow text-[14px] text-gray-600">
+                                    <li class="flex gap-3 items-center"><span class="text-[#023619] font-bold shrink-0">✓</span> Acesso ilimitado</li>
+                                    <li class="flex gap-3 items-center"><span class="text-[#023619] font-bold shrink-0">✓</span> + de 400 questões respondidas</li>
+                                </ul>
+                                <button class="w-full bg-[#023619] text-white text-[13px] font-sora font-bold uppercase py-[18px] rounded-none hover:bg-transparent hover:text-[#023619] border border-[#023619] transition-all">Quero este pacote</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_inst_tips" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Tooltips & Popups</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Elementos flutuantes e guias de interação projetados especificamente para chamar a atenção em Landing Pages e sites institucionais.</p>
+                </div>
+                
+                <div class="space-y-12">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek">Tooltip Animada de Conversão</h3>
+                        <p class="text-gray-600 mb-4">Utilizada em timelines ou para destacar botões/chamadas de ação. Caracteriza-se por bordas totalmente retas (<code class="bg-gray-100 px-1 rounded text-sm font-mono">rounded-none</code>), tipografia Sora Uppercase e animação de flutuação vertical contínua com a classe customizada <code class="bg-gray-100 px-1 rounded text-sm font-mono">.animate-float</code>.</p>
+                        <div class="bg-white border border-gray-200 p-12 rounded-xl flex items-center justify-center relative min-h-[200px]">
+                            <div class="relative bg-[#023619] text-white text-[11px] font-sora font-bold uppercase px-3 py-1.5 rounded-none shadow-lg whitespace-nowrap animate-float">
+                                Clique para interagir
+                                <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#023619] rotate-45"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-lg overflow-hidden mt-4 relative group">
+                        <div class="p-4 overflow-x-auto"><code class="text-green-400 font-mono text-sm whitespace-pre">&lt;!-- Estrutura do Tooltip Animado da LP --&gt;
+&lt;div class="relative bg-[#023619] text-white text-[11px] font-sora font-bold uppercase px-3 py-1.5 rounded-none shadow-lg animate-float"&gt;
+    Clique para interagir
+    &lt;div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#023619] rotate-45"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></div>
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity" title="Copiar"><i class="ph ph-copy"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_inst_faq" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">FAQ (Dúvidas Frequentes)</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Componente global de FAQ estilizado para páginas de vendas, com suporte a temas claros e escuros.</p>
+                </div>
+                <div class="bg-gray-100 p-8 rounded-2xl mb-12">
+                    <div class="w-full max-w-7xl mx-auto bg-white p-6 md:p-12 rounded-[12px] shadow-sm faq-container">
+                        <h1 class="font-bold font-anek text-left mb-4 text-[#023619] text-3xl md:text-[41px]">Dúvidas Frequentes</h1>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
+                            <aside class="faq-menu-claro md:col-span-1 font-roboto">
+                                <ul class="space-y-2">
+                                    <li><a href="#" class="menu-item ativo text-base md:text-lg text-gray-600 hover:text-gray-900 transition-colors" onclick="mostrarTabFaq('tab1-cap-claro', this, event)">Geral</a></li>
+                                </ul>
+                            </aside>
+                            <main class="md:col-span-3 space-y-4 font-roboto">
+                                <div id="tab1-cap-claro" class="faq-tab space-y-4" style="display: block;">
+                                    <details class="border-b pb-2" open>
+                                        <summary class="font-semibold text-xl text-gray-800">O que está incluso?</summary>
+                                        <div class="text-gray-600 space-y-2 mt-2"><p>Acesso completo à plataforma de simulações.</p></div>
+                                    </details>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_tool_typo" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Tipografia</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Para calculadoras e widgets, utilizamos fontes limpas e focadas em legibilidade e dados numéricos.</p>
+                </div>
+                <h3 class="text-lg font-bold mb-4 font-anek">Tipografia de Dados (Google Fonts)</h3>
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 max-w-2xl">
+                    <div>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded font-bold">Valores e Títulos</span>
+                        <p class="font-anek text-4xl font-bold text-gray-900 mt-2">R$ 15.000,00</p>
+                        <p class="text-sm text-gray-400 mt-1">Anek Latin (Bold 700)</p>
+                    </div>
+                    <div class="border-t pt-4">
+                        <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded font-bold">Labels e Apoio</span>
+                        <p class="font-roboto text-base text-gray-600 mt-2">Informe o valor mensal que deseja investir.</p>
+                        <p class="text-sm text-gray-400 mt-1">Roboto (Regular 400)</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_tool_color" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Cores</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">A paleta utiliza as classes utilitárias nativas do Tailwind CSS para garantir a estética 'Fintech Moderna'.</p>
+                </div>
+                <h3 class="text-lg font-bold mb-4 font-anek">Paleta Tailwind</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-green-800 rounded-lg shadow-sm shrink-0"></div><div><p class="font-mono text-sm font-bold">bg-green-800</p><p class="text-xs text-gray-500">Botões Primários (Default)</p></div></div>
+                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-green-900 rounded-lg shadow-sm shrink-0"></div><div><p class="font-mono text-sm font-bold">bg-green-900</p><p class="text-xs text-gray-500">Botões Primários (Hover)</p></div></div>
+                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-green-50 rounded-lg shadow-sm border border-gray-200 shrink-0"></div><div><p class="font-mono text-sm font-bold">bg-green-50</p><p class="text-xs text-gray-500">Fundo Suave / Tabs</p></div></div>
+                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-gray-900 rounded-lg shadow-sm shrink-0"></div><div><p class="font-mono text-sm font-bold">text-gray-900</p><p class="text-xs text-gray-500">Texto Forte (Valores)</p></div></div>
+                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-gray-50 rounded-lg shadow-sm border border-gray-200 shrink-0"></div><div><p class="font-mono text-sm font-bold">bg-gray-50</p><p class="text-xs text-gray-500">Fundo de Inputs</p></div></div>
+                </div>
+            </section>
+
+            <section id="sec-cap_tool_cards" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Cards & Containers</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Estrutura base onde todas as ferramentas interativas devem ser encapsuladas.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4 font-anek">Container Principal</h3>
+                    <p class="text-gray-600 mb-4">Cards centralizados em formato mobile-first (<code>max-w-md</code>) com muito preenchimento.</p>
+                    <div class="bg-gray-100 p-8 rounded-xl flex justify-center mb-6">
+                        <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+                            <div class="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
+                            <div class="h-8 bg-gray-100 rounded w-full mb-2"></div>
+                            <div class="h-8 bg-gray-100 rounded w-full"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-lg overflow-hidden mt-4 relative group">
+                        <div class="p-4 overflow-x-auto"><code class="text-green-400 font-mono text-sm whitespace-pre">&lt;!-- Container Principal da Ferramenta --&gt;
+&lt;div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md"&gt;
+    &lt;!-- Conteúdo da ferramenta --&gt;
+&lt;/div&gt;</code></div>
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity" title="Copiar"><i class="ph ph-copy"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_tool_buttons" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Botões & Interações</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Elementos de interação específicos para dados financeiros e decisões rápidas.</p>
+                </div>
+                <div class="space-y-12">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-lg font-bold mb-4 font-anek">Botão Primário (CTA)</h3>
+                            <div class="p-6 border border-gray-200 rounded-xl flex flex-col gap-4">
+                                <button class="w-full bg-green-800 hover:bg-green-900 text-white font-semibold py-3 rounded-xl shadow-md transition-colors duration-200">Calcular Investimento</button>
+                                <span class="text-xs text-gray-400 text-center">Arredondamento xl (diferente das LPs)</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold mb-4 font-anek">Botão Secundário / Link</h3>
+                            <div class="p-6 border border-gray-200 rounded-xl flex items-center justify-center h-[100px]">
+                                <button class="text-green-700 font-medium flex items-center space-x-1 hover:text-green-800">
+                                    <span>Ver detalhes avançados</span>
+                                    <i class="ph ph-caret-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Financeiro -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek">Input Financeiro (Borderless)</h3>
+                        <div class="p-6 border border-gray-200 rounded-xl bg-white max-w-md">
+                            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-green-500 focus-within:border-transparent transition-all">
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Valor Mensal</label>
+                                <div class="flex items-center justify-between">
+                                    <span class="font-semibold text-gray-800 mr-2">R$</span>
+                                    <input type="text" class="text-3xl font-semibold text-gray-900 bg-transparent outline-none border-none p-0 text-right w-full font-anek placeholder-gray-300" placeholder="0,00" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sliding Tab -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek">Navegação "Sliding Tab"</h3>
+                        <div class="p-6 border border-gray-200 rounded-xl bg-white max-w-md">
+                            <div class="bg-green-50 p-1 rounded-xl flex relative">
+                                <div class="absolute left-1 top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm z-0"></div>
+                                <button class="flex-1 py-2 px-4 text-sm font-medium relative z-10 text-gray-900">Enviar</button>
+                                <button class="flex-1 py-2 px-4 text-sm font-medium relative z-10 text-gray-500 hover:text-gray-700">Receber</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_tool_tips" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Tooltips & Popups</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Balões de informação e indicativos numéricos voltados para interfaces de sistemas, calculadoras e inputs.</p>
+                </div>
+                
+                <div class="space-y-12">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek">Tooltip Funcional (Sliders e Indicadores)</h3>
+                        <p class="text-gray-600 mb-4">Utilizada predominantemente em elementos interativos como sliders. Possui cantos arredondados (<code class="bg-gray-100 px-1 rounded text-sm font-mono">0.5rem</code>), uma sombra leve de profundidade e utiliza a classe <code class="bg-gray-100 px-1 rounded text-sm font-mono">.cap-popup</code> para obter o verde institucional e a ponta direcional.</p>
+                        <div class="bg-gray-100 p-12 rounded-xl flex items-center justify-center relative min-h-[150px]">
+                            <!-- Mock de como aparece no slider -->
+                            <div class="custom-slider-popup cap-popup show opacity-100 relative translate-x-0 translate-y-0 z-10 mx-auto" style="left: auto; top: auto; position: relative;">
+                                R$ 5.000,00
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-lg overflow-hidden mt-4 relative group border border-slate-800">
+                        <div class="p-4 overflow-x-auto"><code class="text-green-400 font-mono text-sm whitespace-pre">&lt;!-- CSS Nativo da Tooltip Ferramenta --&gt;
+&lt;style&gt;
+.custom-slider-popup {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    /* ... propriedades de layout e transição */
+}
+.cap-popup { 
+    background: #023619; 
+    color: white; 
+}
+.cap-popup::after { 
+    /* Setinha lateral/inferior em CSS */
+    border-color: transparent transparent transparent #023619; 
+}
+&lt;/style&gt;
+
+&lt;!-- HTML da Aplicação --&gt;
+&lt;div class="custom-slider-popup cap-popup show"&gt;
+    R$ 5.000,00
+&lt;/div&gt;</code></div>
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-copy"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-cap_tool_calc" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-green mb-2 block">AUVP Capital • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Calculadora AUVP Capital</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Ferramenta avançada de juros compostos. Adaptada para a Capital com thumb Verde e destaques Neutros.</p>
+                </div>
+                
+                <div class="bg-gray-100 p-8 rounded-2xl flex justify-center">
+                    <div class="w-full max-w-md cap-calc-wrapper">
+                        <div class="font-roboto flex flex-col bg-white p-6 rounded-2xl shadow-xl gap-6 w-full relative border border-gray-100">
+                            <div class="w-full relative">
+                                <div class="flex justify-between items-center mb-2">
+                                    <p class="text-gray-500 text-sm font-medium m-0">Seu investimento inicial</p>
+                                    <span class="text-[#023619] font-anek font-bold text-2xl">R$ 10.000</span>
+                                </div>
+                                <input type="range" min="0" max="1000" step="1" value="232">
+                                <div class="flex justify-between text-sm text-gray-600 mt-2 font-medium">
+                                    <span>R$ 1 mil</span><span>R$ 10 mi</span>
+                                </div>
+                                <!-- Popup Tooltip Mock -->
+                                <div class="custom-slider-popup cap-popup show" style="left: 23.2%; top: 45px;">Arraste para simular</div>
+                            </div>
+                            <div class="grid grid-cols-1 gap-4 bg-gray-50 p-4 rounded-xl items-end mt-4 border border-gray-200">
+                                <div class="text-center">
+                                    <p class="text-gray-500 text-sm font-medium m-0">Valor estimado na carteira</p>
+                                    <span class="text-green-800 font-anek font-bold text-2xl block mt-1">R$ 48.500,00</span>
+                                </div>
+                                <div class="text-center border-t border-gray-200 pt-3">
+                                    <p class="text-gray-500 text-sm font-medium m-0">Valor estimado na poupança</p>
+                                    <span class="text-gray-600 font-anek font-bold text-xl block mt-1">R$ 14.200,00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================== -->
+            <!-- AUVP ESCOLA - INSTITUCIONAL (SITES E LPS)      -->
+            <!-- ============================================== -->
+            
+            <section id="sec-esc_inst_typo" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Tipografia</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">A Escola foca em Anek Latin Bold para Títulos escuros, e tags pré-título Douradas, garantindo um visual premium.</p>
+                </div>
+                <div class="bg-gray-50 p-8 border border-gray-200 rounded-xl space-y-8 shadow-sm">
+                    <div>
+                        <span class="text-sm font-mono text-gray-400">Pré-Título Tag - Anek Latin - 13px (Ouro Escuro)</span><br>
+                        <span class="inline-block font-anek text-[13px] font-bold text-[#d4a73d] uppercase tracking-[1.5px] bg-[rgba(239,191,78,0.1)] px-[14px] py-[6px] rounded mb-[15px]">Inscrições Abertas</span>
+                    </div>
+                    <div>
+                        <span class="text-sm font-mono text-gray-400">H2 Principal - Anek Latin - 41px - SemiBold (Preto #18181b)</span>
+                        <h2 class="font-anek text-[41px] leading-tight font-semibold text-[#18181b] tracking-tight uppercase">Próxima Turma</h2>
+                    </div>
+                    <div>
+                        <span class="text-sm font-mono text-gray-400 block mb-2">Texto Corrido / Subtítulos - Roboto - 17px (Cinza #71717a)</span>
+                        <p class="font-roboto text-[17px] leading-relaxed text-[#71717a]">Faltam poucos dias para a abertura das vagas da AUVP. O cronômetro abaixo indica o tempo exato para você começar a sua jornada.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_inst_color" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Cores</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">A paleta da Escola exclui o verde, apoiando-se no Dourado (Gold), Cinzas suaves e um fundo radial limpo.</p>
+                </div>
+                <h3 class="text-lg font-bold mb-4 font-anek">Cores da Escola</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #efbf4e"><span class="font-mono text-sm text-gray-900">#efbf4e</span></div><div><h4 class="font-semibold text-gray-900">Ouro Primário</h4></div></div>
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #d4a73d"><span class="font-mono text-sm text-white">#d4a73d</span></div><div><h4 class="font-semibold text-gray-900">Ouro Escuro (Textos)</h4></div></div>
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #18181b"><span class="font-mono text-sm text-white">#18181b</span></div><div><h4 class="font-semibold text-gray-900">Preto (Títulos)</h4></div></div>
+                    <div class="flex flex-col space-y-2"><div class="h-24 w-full rounded-lg shadow-sm flex items-end p-3" style="background-color: #71717a"><span class="font-mono text-sm text-white">#71717a</span></div><div><h4 class="font-semibold text-gray-900">Cinza Muted</h4></div></div>
+                </div>
+            </section>
+
+            <section id="sec-esc_inst_layout" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Layout & Espaçamento</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Em vez da quebra estrita de cores sólidas, a Escola usa Fundo Radial e Glassmorphism para sobreposição fluida.</p>
+                </div>
+                <div class="bg-gray-100 p-8 rounded-2xl flex justify-center">
+                    <div class="w-full max-w-2xl aspect-[2/1] rounded-2xl border border-gray-300 relative flex items-center justify-center overflow-hidden" style="background: radial-gradient(circle at center, #f8f9fa 0%, #e5e7eb 100%);">
+                        <span class="absolute top-4 left-4 text-xs font-mono text-gray-500">Fundo Radial Escala de Cinza</span>
+                        <div class="w-3/4 h-3/4 bg-white/50 backdrop-blur-xl border border-white/40 shadow-xl rounded-2xl flex items-center justify-center">
+                            <span class="font-anek font-bold text-gray-800 text-xl">Camada Glassmorphism Principal</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_inst_cards" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Cards (Glassmorphism)</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Cartões flutuantes que interagem com o fundo usando desfoque (blur) e bordas finas.</p>
+                </div>
+                <div class="p-8 rounded-2xl relative overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300">
+                    <!-- Elementos de fundo para mostrar o blur -->
+                    <div class="absolute top-0 right-10 w-48 h-48 bg-yellow-400/30 rounded-full blur-3xl"></div>
+                    <div class="absolute bottom-0 left-10 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl"></div>
+                    
+                    <div class="relative bg-white/50 backdrop-blur-xl border border-black/10 shadow-[0_10px_30px_rgba(0,0,0,0.04)] rounded-[16px] p-8 max-w-md mx-auto transition-all duration-400 hover:bg-white/80 hover:-translate-y-2 hover:shadow-xl hover:border-[#efbf4e] cursor-pointer">
+                        <span class="inline-block font-anek text-[11px] font-bold text-[#d4a73d] uppercase tracking-[1px] bg-[rgba(239,191,78,0.1)] px-2 py-1 rounded mb-[15px]">Módulo 01</span>
+                        <h4 class="font-anek text-2xl font-bold text-gray-900 mb-2 tracking-tight">Preparando seu cérebro</h4>
+                        <p class="text-[#71717a] font-roboto text-[0.95rem] leading-relaxed">Exemplo de card com efeito glassmorphism utilizado nas LPs da Escola.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_inst_buttons" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Botões</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">A Escola evita as bordas retas pesadas da Capital. Os botões são arredondados (pílula) para criar uma sensação mais amigável.</p>
+                </div>
+                <div class="bg-gray-100 p-8 rounded-2xl flex gap-8 justify-center items-center flex-wrap">
+                    <button class="bg-[#efbf4e] text-[#18181b] font-anek font-bold text-[14px] uppercase tracking-wider px-8 py-4 rounded-full shadow-[0_8px_20px_rgba(239,191,78,0.3)] hover:-translate-y-1 hover:brightness-110 transition-all">Quero me matricular</button>
+                    <button class="bg-white/40 border border-black/10 text-gray-600 hover:text-gray-900 hover:bg-white px-8 py-4 rounded-full font-anek font-bold text-[14px] uppercase tracking-wider transition-all">Saber Mais</button>
+                </div>
+            </section>
+
+            <section id="sec-esc_inst_grid" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Grade Curricular</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Carrossel de módulos com comportamento nativo de rolagem horizontal em dispositivos móveis. Totalmente neutralizado de verdes, usando o Glassmorphism.</p>
+                </div>
+                
+                <div class="bg-gray-100 p-4 md:p-8 rounded-2xl overflow-hidden relative">
+                    <div class="text-center mb-10">
+                        <h2 class="text-gray-900 font-anek font-semibold text-3xl md:text-[41px] mb-4 leading-tight">O que você vai aprender?</h2>
+                    </div>
+                    <div class="flex overflow-x-auto snap-x snap-mandatory gap-5 pb-6 hide-scrollbar">
+                        <div class="flex-shrink-0 w-[85vw] max-w-[320px] snap-center">
+                            <div class="bg-white/50 backdrop-blur-xl border border-black/10 rounded-2xl overflow-hidden shadow-sm h-full flex flex-col hover:-translate-y-2 transition-transform hover:border-[#efbf4e]">
+                                <div class="h-[180px] bg-gray-300 border-b border-black/10 flex items-center justify-center text-gray-600 font-mono text-sm">[Imagem: Capa do Módulo]</div>
+                                <div class="p-6 flex flex-col flex-grow">
+                                    <span class="font-anek text-[0.7rem] font-semibold text-[#d4a73d] uppercase bg-[#efbf4e]/10 px-2.5 py-1 rounded w-fit mb-3 tracking-[0.5px]">Módulo 01</span>
+                                    <h3 class="text-gray-900 font-anek font-semibold text-xl mb-3 leading-[1.3]">Preparando seu cérebro</h3>
+                                    <p class="text-gray-500 font-roboto text-[0.95rem] leading-relaxed">Mudamos totalmente a perspectiva da sua vida financeira, ensinando sobre crenças.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0 w-[85vw] max-w-[320px] snap-center">
+                            <div class="bg-white/50 backdrop-blur-xl border border-black/10 rounded-2xl overflow-hidden shadow-sm h-full flex flex-col hover:-translate-y-2 transition-transform hover:border-[#efbf4e]">
+                                <div class="h-[180px] bg-gray-300 border-b border-black/10 flex items-center justify-center text-gray-600 font-mono text-sm">[Imagem: Capa do Módulo]</div>
+                                <div class="p-6 flex flex-col flex-grow">
+                                    <span class="font-anek text-[0.7rem] font-semibold text-[#d4a73d] uppercase bg-[#efbf4e]/10 px-2.5 py-1 rounded w-fit mb-3 tracking-[0.5px]">Módulo 02</span>
+                                    <h3 class="text-gray-900 font-anek font-semibold text-xl mb-3 leading-[1.3]">Organize seus Gastos</h3>
+                                    <p class="text-gray-500 font-roboto text-[0.95rem] leading-relaxed">Identifique gargalos, faça orçamentos e descubra a verdade sobre financiamentos.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_inst_countdown" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Contagem Regressiva</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Widget dinâmico focado em escassez utilizando a paleta Gold da AUVP Escola e layout glassmorphism autêntico.</p>
+                </div>
+                
+                <div class="esc-countdown-container p-4 md:p-8 rounded-2xl relative overflow-hidden border border-gray-200">
+                    <div class="auvp-glass-card-countdown" id="countdownCard" style="opacity:1; transform: translateY(0);">
+                        <div class="flex flex-col lg:flex-row items-center justify-between p-8 md:p-16 gap-8 min-h-[400px]">
+                            <div class="text-center lg:text-left flex-1 z-10">
+                                <div class="mb-8">
+                                    <span class="inline-block font-anek text-[13px] font-bold text-[#d4a73d] uppercase tracking-[1.5px] bg-[rgba(239,191,78,0.1)] px-[14px] py-[6px] rounded mb-[15px] leading-snug">
+                                        Inscrições abertas <span class="md:hidden block"></span> para a turma 54
+                                    </span>
+                                    <h2 class="text-gray-900 font-anek font-semibold text-3xl md:text-4xl lg:text-[41px] m-0 mb-3 leading-tight uppercase tracking-tight">Próxima Turma</h2>
+                                    <p class="text-gray-500 font-roboto text-base lg:text-[17px] font-normal max-w-[500px] mx-auto lg:mx-0 leading-relaxed">Faltam poucos dias para a abertura das vagas da AUVP. O cronômetro abaixo indica o tempo exato para você começar a sua jornada.</p>
+                                </div>
+                                <div class="grid grid-cols-4 gap-3 max-w-[540px] mx-auto lg:mx-0">
+                                    <div class="esc-timer-block"><span class="font-anek text-3xl lg:text-[48px] font-extrabold text-gray-900 leading-none mb-1">05</span><span class="font-roboto text-[9px] uppercase text-[#d4a73d] font-bold tracking-[1px]">Dias</span></div>
+                                    <div class="esc-timer-block"><span class="font-anek text-3xl lg:text-[48px] font-extrabold text-gray-900 leading-none mb-1">12</span><span class="font-roboto text-[9px] uppercase text-[#d4a73d] font-bold tracking-[1px]">Horas</span></div>
+                                    <div class="esc-timer-block"><span class="font-anek text-3xl lg:text-[48px] font-extrabold text-gray-900 leading-none mb-1">30</span><span class="font-roboto text-[9px] uppercase text-[#d4a73d] font-bold tracking-[1px]">Minutos</span></div>
+                                    <div class="esc-timer-block"><span class="font-anek text-3xl lg:text-[48px] font-extrabold text-gray-900 leading-none mb-1">45</span><span class="font-roboto text-[9px] uppercase text-[#d4a73d] font-bold tracking-[1px]">Segundos</span></div>
+                                </div>
+                            </div>
+                            <div class="flex-1 flex justify-center items-center z-10 w-full relative mt-8 lg:mt-0">
+                                <div class="w-full max-w-[580px] aspect-[16/10] bg-white/20 border-2 border-dashed border-white/50 rounded-2xl flex items-center justify-center text-white/80 font-mono text-sm lg:scale-125 lg:mr-[-10%] shadow-lg backdrop-blur-sm">
+                                    [Imagem: Mockup do Produto / Notebook]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_inst_adv" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Padrões Avançados</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Para Toggles e Timelines, a Escola segue o layout padrão mas substitui a cor de destaque (Accent) de Verde para Gold e remove botões retos.</p>
+                </div>
+                <div class="bg-gray-50 p-8 border border-gray-200 rounded-xl flex flex-col items-center justify-center">
+                    <span class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-6">Tabs Múltiplas (Escola)</span>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <button class="bg-[#efbf4e] text-[#18181b] border border-[#efbf4e] px-6 py-3 rounded-full font-bold text-[13px] uppercase shadow-lg">Módulo 1</button>
+                        <button class="bg-white/40 border border-black/10 text-gray-500 hover:text-gray-800 px-6 py-3 rounded-full font-bold text-[13px] uppercase transition-all">Módulo 2</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_inst_tips" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Tooltips & Popups</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Elementos flutuantes para as LPs da Escola, adaptando o componente institucional para usar cores Gold ao invés do verde.</p>
+                </div>
+                
+                <div class="space-y-12">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek">Tooltip Animada de Conversão (Escola)</h3>
+                        <p class="text-gray-600 mb-4">Ao invés do fundo Verde Escuro da Capital, na Escola utilizamos o Ouro Primário (<code class="bg-gray-100 px-1 rounded text-sm font-mono">#efbf4e</code>) com texto escuro (<code class="bg-gray-100 px-1 rounded text-sm font-mono">#18181b</code>) para manter a leitura e a identidade. A animação <code class="bg-gray-100 px-1 rounded text-sm font-mono">.animate-float</code> é mantida.</p>
+                        <div class="bg-white border border-gray-200 p-12 rounded-xl flex items-center justify-center relative min-h-[200px]">
+                            <div class="relative bg-[#efbf4e] text-[#18181b] text-[11px] font-sora font-bold uppercase px-3 py-1.5 rounded shadow-[0_8px_20px_rgba(239,191,78,0.3)] whitespace-nowrap animate-float">
+                                Últimas Vagas
+                                <div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#efbf4e] rotate-45"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-lg overflow-hidden mt-4 relative group">
+                        <div class="p-4 overflow-x-auto"><code class="text-yellow-400 font-mono text-sm whitespace-pre">&lt;!-- Estrutura do Tooltip Animado da LP (Escola) --&gt;
+&lt;div class="relative bg-[#efbf4e] text-[#18181b] text-[11px] font-sora font-bold uppercase px-3 py-1.5 rounded shadow-lg animate-float"&gt;
+    Últimas Vagas
+    &lt;div class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#efbf4e] rotate-45"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></div>
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity" title="Copiar"><i class="ph ph-copy"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_inst_faq" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Sites & LPs</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">FAQ (Dúvidas Frequentes)</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Para a escola, o componente FAQ segue a estrutura padrão, mas garantimos que as interações e cores combinem com a marca Escola (Anek, sem verdes).</p>
+                </div>
+                <div class="bg-gray-100 p-8 rounded-2xl mb-12">
+                    <div class="w-full max-w-7xl mx-auto bg-white p-6 md:p-12 rounded-xl shadow-sm faq-container">
+                        <h1 class="font-bold font-anek text-left mb-4 text-[#18181b] text-3xl md:text-[41px]">Dúvidas Frequentes</h1>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-8">
+                            <aside class="faq-menu-claro md:col-span-1 font-anek">
+                                <ul class="space-y-2">
+                                    <li><a href="#" class="menu-item ativo text-base md:text-lg text-gray-600 hover:text-gray-900 transition-colors" onclick="mostrarTabFaq('tab1-esc-claro', this, event)">Dúvidas Gerais</a></li>
+                                </ul>
+                            </aside>
+                            <main class="md:col-span-3 space-y-4 font-anek">
+                                <div id="tab1-esc-claro" class="faq-tab space-y-4" style="display: block;">
+                                    <details class="border-b border-gray-200 pb-2" open>
+                                        <summary class="font-semibold text-xl text-gray-800">O que vou aprender?</summary>
+                                        <div class="text-gray-600 space-y-2 mt-2"><p>Tudo que precisa para investir do zero.</p></div>
+                                    </details>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================== -->
+            <!-- AUVP ESCOLA - FERRAMENTAS                      -->
+            <!-- ============================================== -->
+            <section id="sec-esc_tool_typo" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Tipografia (Dados)</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Em calculadoras, os valores de destaque na Escola devem usar Anek Latin bold. As labels mantêm-se em Roboto (Muted).</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6 max-w-2xl">
+                    <div>
+                        <span class="text-xs bg-[#efbf4e]/20 text-[#d4a73d] px-2 py-1 rounded font-bold uppercase tracking-wider">Valores Escola</span>
+                        <p class="font-anek text-4xl font-bold text-gray-900 mt-2">R$ 15.000,00</p>
+                        <p class="text-sm text-gray-400 mt-1">Anek Latin (Bold 700) + text-gray-900 ou text-[#d4a73d]</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_tool_color" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Cores Tailwind</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Ferramentas da Escola repudiam classes "green". Substitua por classes genéricas (gray) ou hexadecimais dourados via JIT (<code>[#efbf4e]</code>).</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
+                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-[#efbf4e] rounded-lg shadow-sm shrink-0"></div><div><p class="font-mono text-sm font-bold">bg-[#efbf4e]</p><p class="text-xs text-gray-500">Acentos, Sliders, Balões</p></div></div>
+                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-[#d4a73d] rounded-lg shadow-sm shrink-0"></div><div><p class="font-mono text-sm font-bold">text-[#d4a73d]</p><p class="text-xs text-gray-500">Valores Positivos / Resultado</p></div></div>
+                    <div class="flex items-center space-x-4 bg-white p-4 rounded-xl border border-gray-100 shadow-sm"><div class="w-16 h-16 bg-zinc-500 rounded-lg shadow-sm shrink-0"></div><div><p class="font-mono text-sm font-bold">text-zinc-500</p><p class="text-xs text-gray-500">Valores Negativos/Neutros (Poupança)</p></div></div>
+                </div>
+            </section>
+
+            <section id="sec-esc_tool_cards" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Cards Containers</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Ferramentas devem ser encapsuladas em cards brancos e limpos, mesmo na visão Escola.</p>
+                </div>
+                <div class="bg-gray-100 p-8 rounded-xl flex justify-center mb-6">
+                    <div class="bg-white rounded-2xl shadow-[0_4px_18px_rgba(0,0,0,0.08)] p-6 w-full max-w-sm border border-gray-100">
+                        <div class="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
+                        <div class="h-8 bg-gray-100 rounded w-full mb-2"></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-lg overflow-hidden mt-4 relative group border border-slate-800">
+                    <div class="p-4 overflow-x-auto"><code class="text-yellow-400 font-mono text-sm whitespace-pre">&lt;!-- Container Principal da Ferramenta (Escola) --&gt;
+&lt;div class="bg-white rounded-2xl shadow-[0_4px_18px_rgba(0,0,0,0.08)] border border-gray-100 p-6 w-full max-w-md"&gt;
+    &lt;!-- Conteúdo da ferramenta --&gt;
+&lt;/div&gt;</code></div>
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity" title="Copiar"><i class="ph ph-copy"></i></button>
+                </div>
+            </section>
+
+            <section id="sec-esc_tool_buttons" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Botões & Interações</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Botões e links em ferramentas da escola usam a cor do texto Escura ou Dourada, e nunca verde.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek">Botão Secundário / Link</h3>
+                        <div class="p-6 border border-gray-200 rounded-xl flex items-center justify-center h-[100px]">
+                            <button class="text-[#d4a73d] font-bold font-anek tracking-wider uppercase text-sm flex items-center space-x-1 hover:brightness-110">
+                                <span>Ver detalhes</span>
+                                <i class="ph ph-caret-right"></i>
+                            </button>
+                        </div>
+                        <div class="bg-slate-900 rounded-lg overflow-hidden mt-4 relative group border border-slate-800">
+                            <div class="p-4 overflow-x-auto"><code class="text-yellow-400 font-mono text-sm whitespace-pre">class="text-[#d4a73d] font-bold font-anek tracking-wider uppercase text-sm flex items-center space-x-1 hover:brightness-110"</code></div>
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity" title="Copiar"><i class="ph ph-copy"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_tool_tips" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Tooltips & Popups</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Na AUVP Escola, balões interativos em sistemas e calculadoras utilizam o tom Gold (<code class="bg-gray-100 px-1 rounded text-sm font-mono">#efbf4e</code>) para sinalizar interação em formato de tooltip funcional.</p>
+                </div>
+                
+                <div class="space-y-12">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek">Tooltip Dourada (Funcional)</h3>
+                        <p class="text-gray-600 mb-4">Utilizada juntamente com a classe base <code class="bg-gray-100 px-1 rounded text-sm font-mono">.custom-slider-popup</code>. O modificador <code class="bg-gray-100 px-1 rounded text-sm font-mono">.esc-popup</code> altera o fundo para o Gold primário e o texto para um cinza muito escuro para garantir elevado contraste, mantendo a geometria arredondada.</p>
+                        <div class="bg-gray-100 p-12 rounded-xl flex items-center justify-center relative min-h-[150px]">
+                            <!-- Mock Escola -->
+                            <div class="custom-slider-popup esc-popup show opacity-100 relative translate-x-0 translate-y-0 z-10 mx-auto" style="left: auto; top: auto; position: relative;">
+                                R$ 1.500,00
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 rounded-lg overflow-hidden mt-4 relative group border border-slate-800">
+                        <div class="p-4 overflow-x-auto"><code class="text-yellow-400 font-mono text-sm whitespace-pre">&lt;!-- CSS Nativo da Tooltip Escola --&gt;
+&lt;style&gt;
+.custom-slider-popup {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    /* ... outras propriedades de layout */
+}
+.esc-popup { 
+    background: #efbf4e; 
+    color: #1f2937; 
+}
+.esc-popup::after { 
+    /* A seta flutuante em CSS */
+    border-color: transparent transparent transparent #efbf4e; 
+}
+&lt;/style&gt;
+
+&lt;!-- HTML da Aplicação --&gt;
+&lt;div class="custom-slider-popup esc-popup show"&gt;
+    R$ 1.500,00
+&lt;/div&gt;</code></div>
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-copy"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_tool_calc" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Ferramentas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Calculadora AUVP Escola</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Ferramenta avançada de juros compostos com Sliders baseados em escala logarítmica (para facilitar pequenos e grandes valores). Design limpo sem tons de verde.</p>
+                </div>
+                
+                <div class="bg-gray-100 p-8 rounded-2xl flex justify-center">
+                    <div class="w-full max-w-md esc-calc-wrapper">
+                        <div class="font-anek flex flex-col bg-white p-6 rounded-2xl shadow-[0_4px_18px_rgba(0,0,0,0.08)] gap-6 w-full relative border border-gray-100">
+                            
+                            <!-- Slider -->
+                            <div class="w-full relative">
+                                <div class="flex justify-between items-center mb-2">
+                                    <p class="text-gray-500 text-sm font-medium m-0">Seu investimento inicial</p>
+                                    <span class="text-[#B8860B] font-semibold text-2xl" style="transform-origin: bottom center;">R$ 10.000</span>
+                                </div>
+                                <input type="range" min="0" max="1000" step="1" value="232">
+                                <div class="flex justify-between text-sm text-gray-600 mt-2 font-semibold">
+                                    <span>R$ 1 mil</span><span>R$ 10 mi</span>
+                                </div>
+                                <!-- Popup Tooltip Mock -->
+                                <div class="custom-slider-popup esc-popup show" style="left: 23.2%; top: 45px;">
+                                    Arraste para simular
+                                </div>
+                            </div>
+
+                            <!-- Resultados Refatorados para o Design System da Escola -->
+                            <div class="grid grid-cols-1 gap-4 bg-gray-50 p-4 rounded-lg items-end mt-4 border border-gray-200">
+                                <div class="text-center">
+                                    <p class="text-gray-500 text-sm font-medium m-0">Valor estimado na carteira</p>
+                                    <span class="text-[#d4a73d] font-semibold text-2xl block mt-1">R$ 48.500,00</span>
+                                </div>
+                                <div class="text-center border-t border-gray-200 pt-3">
+                                    <p class="text-gray-500 text-sm font-medium m-0">Valor estimado na poupança</p>
+                                    <span class="text-zinc-500 font-semibold text-xl block mt-1">R$ 14.200,00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-lg overflow-hidden mt-8 relative group border border-slate-800">
+                    <div class="p-4 overflow-x-auto"><code class="text-yellow-400 font-mono text-sm whitespace-pre">&lt;!-- CSS Customizado para o Slider da Escola --&gt;
+&lt;style&gt;
+.esc-calc-wrapper input[type=range] { -webkit-appearance: none; width: 100%; height: .5rem; border-radius: .25rem; background: #d1d5db; outline: 0; cursor: pointer; accent-color: #efbf4e; }
+.esc-calc-wrapper input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 1.25rem; height: 1.25rem; border-radius: 50%; background: #efbf4e; border: 3px solid #fff; box-shadow: 0 0 3px rgba(0, 0, 0, .25); position: relative; z-index: 2; }
+&lt;/style&gt;
+
+&lt;!-- Estrutura do Card de Resultados (Sem verdes) --&gt;
+&lt;div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg items-end mt-4 border border-gray-200"&gt;
+    &lt;div class="text-center"&gt;
+        &lt;p class="text-gray-500 text-sm font-medium m-0"&gt;Valor estimado na carteira&lt;/p&gt;
+        &lt;span class="text-[#d4a73d] font-semibold text-2xl block mt-1"&gt;R$ 48.500,00&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="text-center"&gt;
+        &lt;p class="text-gray-500 text-sm font-medium m-0"&gt;Valor estimado na poupança&lt;/p&gt;
+        &lt;span class="text-zinc-500 font-semibold text-xl block mt-1"&gt;R$ 14.200,00&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></div>
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-copy"></i></button>
+                </div>
+            </section>
+
+
+            <!-- ============================================== -->
+            <!-- AUVP ESCOLA - PLATAFORMA DE AULAS (NOVO)       -->
+            <!-- ============================================== -->
+            
+            <section id="sec-esc_plat_color" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Plataforma de Aulas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Cores & Modos de Visualização</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">A plataforma tem como visão principal o <strong>Modo Claro (Light Mode)</strong> para manter a consistência da marca. Contudo, possui o <strong>Dark Mode</strong> como alternativa focada na redução da fadiga visual (baseada em paleta <code>zinc</code>).</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek text-gray-900">Paleta Principal (Modo Claro)</h3>
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-white rounded border border-gray-200 shadow-sm"></div>
+                                <div>
+                                    <p class="font-bold font-mono text-sm text-gray-900">bg-white / bg-gray-50</p>
+                                    <p class="text-xs text-gray-500">Fundos de Tela e Cards</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-gray-900 rounded border border-gray-800"></div>
+                                <div>
+                                    <p class="font-bold font-mono text-sm text-gray-900">text-gray-900</p>
+                                    <p class="text-xs text-gray-500">Títulos e Textos Principais</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-[#efbf4e] rounded border border-yellow-500"></div>
+                                <div>
+                                    <p class="font-bold font-mono text-sm text-yellow-600">#efbf4e</p>
+                                    <p class="text-xs text-gray-500">Acentos, Botões Primários e Progresso</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold mb-4 font-anek text-gray-900">Paleta Alternativa (Modo Escuro)</h3>
+                        <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-6 shadow-xl space-y-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-zinc-900 rounded border border-zinc-700"></div>
+                                <div>
+                                    <p class="font-bold font-mono text-sm text-white">bg-zinc-950 / bg-zinc-900</p>
+                                    <p class="text-xs text-zinc-400">Fundos Escurecidos Alternativos</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-zinc-300 rounded border border-zinc-400"></div>
+                                <div>
+                                    <p class="font-bold font-mono text-sm text-white">text-white / text-zinc-400</p>
+                                    <p class="text-xs text-zinc-400">Títulos e Textos de Apoio</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-[#efbf4e] rounded border border-yellow-600"></div>
+                                <div>
+                                    <p class="font-bold font-mono text-sm text-yellow-500">#efbf4e</p>
+                                    <p class="text-xs text-zinc-400">O acento Dourado mantém-se o mesmo</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_plat_courses" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Plataforma de Aulas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Visualização de Cursos</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Layout em grid dos módulos e cursos na visão principal do aluno (Modo Claro). Focamos em dar ênfase no progresso e fácil retomada de aulas.</p>
+                </div>
+
+                <div class="bg-gray-50 p-8 md:p-12 rounded-2xl border border-gray-200 shadow-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Card Curso 1 -->
+                        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden group cursor-pointer hover:border-gray-300 hover:shadow-lg transition-all shadow-sm hover:-translate-y-1">
+                            <div class="aspect-video bg-gray-100 relative overflow-hidden flex items-center justify-center">
+                                <span class="text-gray-400 font-mono text-xs">[Capa do Curso]</span>
+                                <div class="absolute top-3 left-3 bg-white/90 backdrop-blur text-gray-900 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded shadow-sm border border-gray-200/50">Em Andamento</div>
+                                <!-- Overlay Play no Hover -->
+                                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                                    <div class="w-12 h-12 bg-[#efbf4e] rounded-full flex items-center justify-center text-gray-900 shadow-lg">
+                                        <i class="ph-fill ph-play text-xl ml-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="text-gray-900 font-anek font-bold text-xl leading-tight mb-2 group-hover:text-yellow-600 transition-colors">Ações Brasileiras</h4>
+                                <p class="text-gray-500 text-sm font-roboto mb-4 line-clamp-2">Análise fundamentalista e avaliação de empresas listadas na B3.</p>
+                                
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-xs font-roboto font-bold">
+                                        <span class="text-gray-500">Progresso</span>
+                                        <span class="text-yellow-600">45%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                                        <div class="bg-[#efbf4e] h-full rounded-full" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Curso 2 -->
+                        <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden group cursor-pointer hover:border-gray-300 hover:shadow-lg transition-all shadow-sm hover:-translate-y-1">
+                            <div class="aspect-video bg-gray-100 relative overflow-hidden flex items-center justify-center opacity-80">
+                                <span class="text-gray-400 font-mono text-xs">[Capa do Curso]</span>
+                                <div class="absolute top-3 left-3 bg-emerald-100 border border-emerald-200 text-emerald-700 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded shadow-sm">Concluído</div>
+                            </div>
+                            <div class="p-5">
+                                <h4 class="text-gray-900 font-anek font-bold text-xl leading-tight mb-2 group-hover:text-yellow-600 transition-colors">Reserva de Emergência</h4>
+                                <p class="text-gray-500 text-sm font-roboto mb-4 line-clamp-2">Aprenda a montar sua base de segurança com liquidez diária.</p>
+                                
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-xs font-roboto font-bold">
+                                        <span class="text-gray-500">Progresso</span>
+                                        <span class="text-emerald-600">100%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                                        <div class="bg-emerald-500 h-full rounded-full" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_plat_player" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Plataforma de Aulas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Interface do Player</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">Como o vídeo é o core business da plataforma, ele ocupa a maior parte da tela. Detalhamento dos overlays e do comportamento no Modo Claro.</p>
+                </div>
+                
+                <div class="bg-white p-6 md:p-12 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-8 w-full mx-auto">
+                    <!-- Video Wrapper -->
+                    <div class="w-full aspect-video bg-black rounded-xl relative flex items-center justify-center group cursor-pointer overflow-hidden shadow-xl">
+                        
+                        <!-- Overlay de gradiente inferior para leitura dos botões -->
+                        <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                        <!-- Botão Play Central Estilizado -->
+                        <div class="w-16 h-16 bg-[#efbf4e]/90 backdrop-blur rounded-full flex items-center justify-center text-zinc-950 transition-transform group-hover:scale-110 shadow-[0_0_30px_rgba(239,191,78,0.3)] z-20">
+                            <i class="ph-fill ph-play text-2xl ml-1"></i>
+                        </div>
+                        
+                        <!-- Controles de Video (Bottom Bar) -->
+                        <div class="absolute bottom-0 left-0 w-full px-4 py-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2">
+                            <!-- Progress Bar Fina (Hover fica mais grossa) -->
+                            <div class="w-full h-1 hover:h-2 bg-white/30 rounded-full cursor-pointer relative transition-all">
+                                <div class="absolute top-0 left-0 h-full bg-[#efbf4e] rounded-full w-[35%] relative">
+                                    <div class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-3 h-3 bg-[#efbf4e] rounded-full shadow-md scale-0 group-hover:scale-100 transition-transform origin-center"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botoes de Controle -->
+                            <div class="flex items-center justify-between text-white">
+                                <div class="flex items-center gap-4">
+                                    <button class="hover:text-[#efbf4e] transition-colors"><i class="ph-fill ph-pause text-xl"></i></button>
+                                    <div class="flex items-center gap-2 group/vol">
+                                        <button class="hover:text-[#efbf4e] transition-colors"><i class="ph-fill ph-speaker-high text-xl"></i></button>
+                                        <div class="w-0 overflow-hidden group-hover/vol:w-16 transition-all duration-300 h-1 bg-white/30 rounded-full cursor-pointer">
+                                            <div class="h-full bg-[#efbf4e] w-[80%]"></div>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-mono opacity-80">12:45 / 35:20</span>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <button class="hover:text-[#efbf4e] transition-colors"><i class="ph-fill ph-closed-captioning text-xl"></i></button>
+                                    <button class="hover:text-[#efbf4e] transition-colors"><i class="ph-fill ph-gear text-xl"></i></button>
+                                    <button class="hover:text-[#efbf4e] transition-colors"><i class="ph-bold ph-corners-out text-xl"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Especificacoes Textuais -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <span class="text-xs font-bold text-[#d4a73d] uppercase tracking-[1px] mb-2 block bg-yellow-50 w-fit px-2 py-1 rounded">Módulo 1: Preparando seu cérebro</span>
+                            <h3 class="text-gray-900 font-anek text-3xl font-bold tracking-tight mb-4">01. O despertar financeiro</h3>
+                            <p class="text-gray-600 text-sm font-roboto leading-relaxed mb-6">A hierarquia de textos no player enfatiza o nome da aula. Botões de ação como "Marcar como concluída" ou "Avaliar aula" devem vir logo abaixo deste bloco, usando os botões padrões da Escola.</p>
+                            <button class="bg-white border border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-gray-50 px-6 py-3 rounded-full font-anek font-bold text-[13px] uppercase transition-all flex items-center gap-2 w-fit shadow-sm">
+                                <i class="ph ph-check-circle text-lg"></i> Concluir Aula
+                            </button>
+                        </div>
+                        <div class="bg-gray-50 border border-gray-200 p-6 rounded-xl">
+                            <h4 class="font-bold text-gray-900 font-anek mb-3">Diretrizes de Comportamento</h4>
+                            <ul class="space-y-3 text-sm text-gray-600 font-roboto">
+                                <li class="flex gap-2"><i class="ph-fill ph-check-circle text-[#efbf4e] mt-0.5 text-lg"></i> Auto-hide: Overlay escurecido e botões devem desaparecer após 3 segundos sem movimento do mouse.</li>
+                                <li class="flex gap-2"><i class="ph-fill ph-check-circle text-[#efbf4e] mt-0.5 text-lg"></i> Contraste: O vídeo <strong>sempre</strong> possui fundo preto e controles brancos/dourados internamente, independente do tema escolhido.</li>
+                                <li class="flex gap-2"><i class="ph-fill ph-check-circle text-[#efbf4e] mt-0.5 text-lg"></i> Play State: O botão central deve ter <code>backdrop-blur</code> para não prejudicar a thumb de fundo.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-esc_plat_sidebar" class="content-section hidden-section">
+                <div class="mb-10 border-b border-gray-200 pb-6">
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-gold-dark mb-2 block">AUVP Escola • Plataforma de Aulas</span>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-4 font-anek">Lista de Aulas (Playlist)</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl leading-relaxed">No Modo Claro (visão principal), a barra lateral de aulas utiliza fundos limpos e alto contraste para indicar estados como <strong>Assistindo</strong>, <strong>Concluído</strong> e <strong>Bloqueado</strong>.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-2 h-fit shadow-sm">
+                        <span class="text-[11px] font-bold text-gray-400 uppercase tracking-[1px] mb-2 px-2">Aulas do Módulo</span>
+                        
+                        <!-- Active item -->
+                        <div class="bg-yellow-50 border border-[#efbf4e]/40 p-3 rounded-lg flex gap-3 cursor-pointer shadow-sm relative">
+                            <i class="ph-fill ph-play-circle text-yellow-600 text-2xl shrink-0 mt-0.5"></i>
+                            <div>
+                                <p class="text-gray-900 text-sm font-bold font-anek leading-tight mb-1">01. O despertar financeiro</p>
+                                <span class="text-yellow-700 text-xs font-roboto">15:24 • Assistindo</span>
+                            </div>
+                            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#efbf4e] rounded-r-full"></div>
+                        </div>
+                        
+                        <!-- Completed item -->
+                        <div class="p-3 rounded-lg flex gap-3 cursor-pointer hover:bg-gray-50 transition-colors border border-transparent">
+                            <i class="ph-fill ph-check-circle text-emerald-500 text-2xl shrink-0 mt-0.5 opacity-80"></i>
+                            <div>
+                                <p class="text-gray-700 text-sm font-bold font-anek leading-tight mb-1">02. Entendendo a inflação</p>
+                                <span class="text-gray-500 text-xs font-roboto">22:10 • Concluído</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Locked/Next item -->
+                        <div class="p-3 rounded-lg flex gap-3 cursor-pointer hover:bg-gray-50 transition-colors border border-transparent">
+                            <div class="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center shrink-0 mt-0.5 bg-gray-50">
+                                <i class="ph-fill ph-lock-key text-gray-400 text-[10px]"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm font-bold font-anek leading-tight mb-1">03. O poder dos juros compostos</p>
+                                <span class="text-gray-400 text-xs font-roboto">18:45</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <h3 class="text-lg font-bold font-anek text-gray-900">Estrutura de Código</h3>
+                        <div class="bg-slate-900 rounded-lg overflow-hidden relative group border border-slate-800 h-full">
+                            <div class="p-4 overflow-x-auto"><code class="text-yellow-400 font-mono text-xs whitespace-pre">&lt;!-- Item Ativo da Playlist (Modo Claro) --&gt;
+&lt;div class="bg-yellow-50 border border-[#efbf4e]/40 p-3 rounded-lg flex gap-3 relative shadow-sm"&gt;
+  &lt;!-- Indicador Esquerdo --&gt;
+  &lt;div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#efbf4e] rounded-r-full"&gt;&lt;/div&gt;
+
+  &lt;i class="ph-fill ph-play-circle text-yellow-600 text-2xl"&gt;&lt;/i&gt;
+  &lt;div&gt;
+    &lt;p class="text-gray-900 text-sm font-bold font-anek"&gt;
+        01. O despertar financeiro
+    &lt;/p&gt;
+    &lt;span class="text-yellow-700 text-xs font-roboto"&gt;
+        15:24 &bull; Assistindo
+    &lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></div>
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 p-2 bg-white/10 rounded hover:bg-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity"><i class="ph ph-copy"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Footer do Conteúdo -->
+        <div class="mt-20 pt-8 border-t border-gray-100 flex justify-between text-sm text-gray-400">
+            <p>© 2026 AUVP Design System.</p>
+            <p>Atualizado em 20/02/2026</p>
+        </div>
+    </main>
+
+    <!-- LOGIC (Vanilla JS) -->
+    <script>
+        // Configuração inicial do estado
+        let currentBrand = 'capital'; // 'capital' | 'escola'
+        let currentSystemView = 'institucional'; // 'institucional' | 'ferramentas' | 'plataforma'
+        let currentActiveTab = 'intro';
+
+        // --- DADOS DOS PROMPTS AI-FOOD ---
+        const aiPrompts = {
+            capital: {
+                institucional: `Você atua como um Desenvolvedor Front-end Especialista. Gere o código (HTML, CSS com Tailwind) para uma seção de Landing Page (Sites & LPs) da marca AUVP Capital seguindo EXATAMENTE as regras do Design System abaixo:
+
+[REGRAS DA AUVP CAPITAL - SITES & LPs]
+1. Tipografia:
+- Títulos H1: Família 'Anek Latin', 54px. Se fundo claro = Verde Escuro (#023619). Se escuro = Branco (#FFFFFF).
+- Títulos H2: Família 'Anek Latin', peso Semibold (600), 41px. Se fundo claro = Verde Escuro. Se escuro = Branco ou Amarelo (#EFBE4F).
+- Subtítulos: Família 'Roboto', 20px.
+- Texto Corrido: Família 'Roboto', 17px.
+
+2. Layout & Alternância:
+- As dobras (sections) devem OBRIGATORIAMENTE alternar seus fundos entre Branco Puro (#FFFFFF) e Cinza Claro (#F2F2F2).
+- Para dobras de altíssimo destaque, utilizar Preto Puro (#000000).
+- Distância vertical (padding-top e padding-bottom) entre dobras: exatos 60px.
+- Use a regra do múltiplo de 15px para gaps e margins (15px, 30px, 45px).
+
+3. Cards:
+- Em fundos Pretos: Use cards com fundo Cinza Chumbo (#1B1B1B).
+- Em fundos Brancos: Use cards com fundo Cinza Claro (#F2F2F2).
+- Em fundos Cinza Claro: Use cards com fundo Branco Puro (#FFFFFF).
+- O border-radius dos cards DEVE ser 12px sempre. E o contraste deve ser baixo.
+
+4. Botões:
+- Família tipográfica: 'Sora' (Uppercase).
+- Formato: BORDAS RETAS (border-radius: 0px) com padding py-18px.
+- Hover Fundo Claro: Botão sólido #023619. No hover, fica transparente com borda #023619.
+
+5. Elementos Avançados (Grade, Timeline, Countdown):
+- Devem usar a paleta verde/cinza/preta. NÃO USE GLASSMORPHISM na Capital, prefira fundos sólidos (ex: Cinza Chumbo ou Branco) e borders sólidas.`,
+                
+                ferramentas: `Você atua como um Desenvolvedor Front-end Especialista. Gere o código (HTML, CSS com Tailwind) para um Widget ou Calculadora da marca AUVP Capital seguindo EXATAMENTE as regras do Design System abaixo:
+
+[REGRAS DA AUVP CAPITAL - FERRAMENTAS]
+1. Identidade Visual (Fintech Moderna):
+- Estética limpa, super clean e focada na leitura de dados numéricos.
+- O Container Pai DEVE ser sempre um Card branco (bg-white), com sombra (shadow-xl) e bordas super arredondadas (rounded-2xl).
+- Largura máxima padrão mobile-first: 'max-w-md'.
+
+2. Tipografia:
+- Valores monetários / Títulos: 'Anek Latin', peso Bold (700) ou SemiBold (600).
+- Labels de inputs / Textos de apoio: 'Roboto', peso Regular (400) ou Light (300).
+
+3. Paleta (Tailwind Util):
+- Botões primários: 'bg-green-800'. No hover: 'bg-green-900'.
+- Fundo de pílulas / abas destacadas: 'bg-green-50'.
+- Fundo de Inputs Financeiros: 'bg-gray-50' com 'rounded-xl'.
+- Sliders: Accent color verde escuro (accent-green-800 ou #023619).
+
+4. Botões de Ferramentas:
+- Ao contrário dos sites institucionais, aqui os botões DEVEM ser arredondados ('rounded-xl').`,
+
+                plataforma: `Regra não se aplica. A AUVP Capital não utiliza visão de Plataforma EAD neste contexto.`
+            },
+            escola: {
+                institucional: `Você atua como um Desenvolvedor Front-end Especialista. Gere o código (HTML, CSS custom) para uma seção de Landing Page (Sites & LPs) da marca AUVP Escola seguindo EXATAMENTE as regras do Design System abaixo:
+
+[REGRAS DA AUVP ESCOLA - SITES & LPs]
+1. Paleta de Cores Gold (NUNCA USE VERDE):
+- Dourado Principal: #efbf4e (Usado em acentos, botões e hovers)
+- Dourado Escuro: #d4a73d (Usado em tipografia de destaque, labels e badges)
+- Fundo de Tags: rgba(239, 191, 78, 0.1)
+
+2. Estilo Glassmorphism (Cartões de Conteúdo):
+- Em vez de alternância rígida, a Escola usa fundos radiais cinzas e cards translúcidos.
+- Fundo Card: rgba(255, 255, 255, 0.5) ou 0.85 dependendo do contraste.
+- Aplique backdrop-filter: blur(24px) (-webkit-backdrop-filter: blur(24px)).
+- Bordas dos cards: 1px solid rgba(0, 0, 0, 0.12). Border-radius: 16px ou 12px.
+- Hover dos cards: translateY(-8px) com leve sombra dourada.
+
+3. Tipografia:
+- Títulos Principais (H2): Família 'Anek Latin', peso Semibold, cor #18181b, tracking apertado.
+- Corpo de Texto (P): Família 'Roboto', 17px, cor Muted (#71717a ou #52525b).
+- Pré-títulos / Tags: Anek Latin, 13px, Uppercase, Tracking alto (letter-spacing: 1.5px), cor #d4a73d com fundo translúcido rgba(239, 191, 78, 0.1).
+
+4. Botões:
+- Formato: Pílula (border-radius: 9999px ou rounded-full).
+- Fundo Gold (#efbf4e), texto Preto (#18181b), Anek Bold, Uppercase.`,
+                
+                ferramentas: `Você atua como um Desenvolvedor Front-end Especialista. Gere o código para uma Calculadora ou Widget da marca AUVP Escola seguindo EXATAMENTE as regras abaixo:
+
+[REGRAS DA AUVP ESCOLA - FERRAMENTAS]
+1. Estilo e Cores (Para Calculadoras):
+- NUNCA utilize cores verdes.
+- O Container Pai DEVE ser sempre um Card branco (bg-white), bordas arredondadas (rounded-2xl) com sombra limpa.
+- Use cores Gold para destaque de valores positivos: #B8860B ou #d4a73d.
+- Para comparações negativas utilize cinzas neutros (text-zinc-500).
+
+2. Inputs (Sliders / Range):
+- A barra do slider (track) deve ser cinza neutro (ex: #d1d5db).
+- A cor de preenchimento (accent-color) e a "Bolinha" (thumb) DEVEM ser douradas (#efbf4e).
+- A bolinha deve ter borda branca de 3px e uma sombra suave.
+
+3. Tipografia de Dados:
+- Valores em destaque (ex: R$ 10.000): Use 'Anek Latin', font-semibold.
+- Labels de instrução: text-gray-500, font-medium, tamanho 'sm'.
+- As caixas de resultado devem ter fundo bg-gray-50, rounded-lg e padding 4.`,
+
+                plataforma: `Você atua como um Desenvolvedor Front-end Especialista. Gere o código (HTML e Tailwind) para uma Plataforma EAD da AUVP Escola seguindo EXATAMENTE as regras abaixo:
+
+[REGRAS DA AUVP ESCOLA - PLATAFORMA DE AULAS]
+1. Modo Claro Principal (Light Mode Default):
+- A visão principal da plataforma deve ser CLARA.
+- Fundos principais (Body, Painéis Grandes): 'bg-gray-50'.
+- Fundos de Cards/Listas (Sidebars, Menus): 'bg-white' com 'border-gray-200'.
+- O "Dark Mode" é apenas um toggle alternativo (se for exigido no contexto, inverta para bg-zinc-950 e border-zinc-800).
+
+2. Tipografia em Modo Claro:
+- Títulos de aulas / Módulos: Família 'Anek Latin', Bold, cor 'text-gray-900'.
+- Informações Meta (duração, "Assistindo"): Família 'Roboto', 'text-gray-500'.
+- Ícones secundários usam 'text-gray-400'.
+
+3. Identidade Gold:
+- A marca da AUVP Escola usa Gold '#efbf4e'.
+- Ícones em estado Ativo/Play e Barras de Progresso de vídeos DEVEM usar '#efbf4e' ou 'text-yellow-600' para contrastar bem no fundo claro.
+- Aulas ativas na playlist ganham 'bg-yellow-50' e bordas douradas.
+- Ícones de Aulas Concluídas usam 'text-emerald-500'.
+
+4. Video Player:
+- A caixa do vídeo é sempre preta ('bg-black'), independentemente do modo de cor escolhido. O botão Play e os controles de vídeo seguem essa temática contrastante.`
+            }
+        };
+
+        // --- INTERATIVIDADE ---
+        window.addEventListener('click', function(e) {
+            if (!document.getElementById('brand-selector').contains(e.target)) {
+                document.getElementById('brand-dropdown').classList.add('hidden');
+                document.getElementById('brand-dropdown').classList.remove('flex');
+            }
+        });
+
+        function toggleBrandDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('brand-dropdown');
+            dropdown.classList.toggle('hidden');
+            dropdown.classList.toggle('flex');
+        }
+
+        function setBrand(brand, event) {
+            if(event) event.stopPropagation();
+            currentBrand = brand;
+            
+            // Atualiza UI do Botão de Marca
+            const brandIcon = document.getElementById('brand-icon');
+            const brandName = document.getElementById('brand-name');
+            
+            // Elementos dinâmicos da 3ª view
+            const btnPlat = document.getElementById('btn-view-plat');
+            const slider = document.getElementById('view-slider');
+            const introCardPlat = document.getElementById('intro-card-plat');
+            const introGrid = document.getElementById('intro-grid');
+            
+            if(brand === 'capital') {
+                brandIcon.textContent = 'C';
+                brandIcon.className = 'w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center text-white font-bold font-anek';
+                brandName.textContent = 'AUVP Capital';
+                
+                // Oculta a visão Plataforma
+                btnPlat.classList.add('hidden');
+                slider.style.width = 'calc(50% - 8px)';
+                introCardPlat.classList.add('hidden');
+                introGrid.classList.remove('md:grid-cols-3');
+                introGrid.classList.add('md:grid-cols-2');
+                
+                if (currentSystemView === 'plataforma') currentSystemView = 'institucional'; // fallback
+            } else {
+                brandIcon.textContent = 'E';
+                brandIcon.className = 'w-8 h-8 bg-brand-gold rounded-lg flex items-center justify-center text-gray-900 font-bold font-anek';
+                brandName.textContent = 'AUVP Escola';
+                
+                // Exibe a visão Plataforma
+                btnPlat.classList.remove('hidden');
+                slider.style.width = 'calc(33.333% - 8px)';
+                introCardPlat.classList.remove('hidden');
+                introCardPlat.classList.add('flex');
+                introGrid.classList.remove('md:grid-cols-2');
+                introGrid.classList.add('md:grid-cols-3');
+            }
+            
+            document.getElementById('brand-dropdown').classList.add('hidden');
+            document.getElementById('brand-dropdown').classList.remove('flex');
+            
+            atualizarCardsIntro();
+            setSystemView(currentSystemView); // Reaplica lógicas de UI do toggle
+        }
+
+        function atualizarCardsIntro() {
+            const cardInst = document.getElementById('intro-card-inst');
+            const titleInst = document.getElementById('intro-title-inst');
+            const iconInst = document.getElementById('intro-icon-inst');
+            const linkInst = document.getElementById('intro-link-inst');
+            const bulletsInst = document.querySelectorAll('.intro-bullet-inst');
+
+            const cardTool = document.getElementById('intro-card-tool');
+            const titleTool = document.getElementById('intro-title-tool');
+            const iconTool = document.getElementById('intro-icon-tool');
+            const linkTool = document.getElementById('intro-link-tool');
+            const bulletsTool = document.querySelectorAll('.intro-bullet-tool');
+
+            cardTool.className = "bg-gray-50 p-8 rounded-2xl border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer flex flex-col h-full group";
+            
+            if (currentBrand === 'capital') {
+                titleInst.className = "text-2xl font-bold mb-3 font-anek group-hover:text-green-800 transition-colors";
+                linkInst.className = "text-sm font-bold text-gray-900 flex items-center mt-auto pt-4 border-t border-gray-200 group-hover:text-green-800 transition-colors";
+                bulletsInst.forEach(b => b.className = "ph ph-caret-right text-green-700 mr-2 intro-bullet-inst");
+                
+                cardTool.classList.add('bg-green-50', 'border-green-100', 'hover:border-green-200');
+                iconTool.className = "w-12 h-12 bg-brand-green rounded-full flex items-center justify-center mb-6 text-white shrink-0";
+                titleTool.className = "text-2xl font-bold mb-3 font-anek group-hover:text-green-900 transition-colors";
+                linkTool.className = "text-sm font-bold text-green-800 flex items-center mt-auto pt-4 border-t border-green-200/50 group-hover:text-green-900 transition-colors";
+                bulletsTool.forEach(b => b.className = "ph ph-caret-right text-green-700 mr-2 intro-bullet-tool");
+            } else {
+                titleInst.className = "text-2xl font-bold mb-3 font-anek group-hover:text-yellow-600 transition-colors";
+                linkInst.className = "text-sm font-bold text-gray-900 flex items-center mt-auto pt-4 border-t border-gray-200 group-hover:text-yellow-600 transition-colors";
+                bulletsInst.forEach(b => b.className = "ph ph-caret-right text-yellow-500 mr-2 intro-bullet-inst");
+
+                cardTool.classList.add('bg-amber-50', 'border-yellow-200', 'hover:border-yellow-300');
+                iconTool.className = "w-12 h-12 bg-brand-gold rounded-full flex items-center justify-center mb-6 text-gray-900 shrink-0";
+                titleTool.className = "text-2xl font-bold mb-3 font-anek group-hover:text-yellow-700 transition-colors";
+                linkTool.className = "text-sm font-bold text-yellow-700 flex items-center mt-auto pt-4 border-t border-yellow-200/50 group-hover:text-yellow-800 transition-colors";
+                bulletsTool.forEach(b => b.className = "ph ph-caret-right text-yellow-600 mr-2 intro-bullet-tool");
+            }
+        }
+
+        function setSystemView(view) {
+            currentSystemView = view;
+            
+            const slider = document.getElementById('view-slider');
+            const btnInst = document.getElementById('btn-view-inst');
+            const btnTool = document.getElementById('btn-view-tool');
+            const btnPlat = document.getElementById('btn-view-plat');
+            
+            // Reseta todos os textos do toggle para inativo
+            btnInst.className = "flex-1 py-1.5 text-[10px] tracking-wide font-bold uppercase relative z-10 transition-colors text-gray-500 hover:text-gray-700";
+            btnTool.className = "flex-1 py-1.5 text-[10px] tracking-wide font-bold uppercase relative z-10 transition-colors text-gray-500 hover:text-gray-700";
+            btnPlat.className = "flex-1 py-1.5 text-[10px] tracking-wide font-bold uppercase relative z-10 transition-colors text-gray-500 hover:text-gray-700";
+            if(currentBrand === 'capital') { btnPlat.classList.add('hidden'); }
+            
+            let activeColorClass = currentBrand === 'capital' ? 'text-green-800' : 'text-yellow-600';
+            
+            // Lógica de posicionamento absoluto unificada
+            if (currentBrand === 'capital') {
+                if (view === 'institucional') {
+                    slider.style.left = '4px';
+                    btnInst.classList.replace('text-gray-500', 'text-gray-900');
+                } else if (view === 'ferramentas') {
+                    slider.style.left = 'calc(50% + 4px)';
+                    btnTool.classList.replace('text-gray-500', activeColorClass);
+                }
+            } else {
+                if (view === 'institucional') {
+                    slider.style.left = '4px';
+                    btnInst.classList.replace('text-gray-500', 'text-gray-900');
+                } else if (view === 'ferramentas') {
+                    slider.style.left = 'calc(33.333% + 4px)';
+                    btnTool.classList.replace('text-gray-500', activeColorClass);
+                } else if (view === 'plataforma') {
+                    slider.style.left = 'calc(66.666% + 4px)';
+                    btnPlat.classList.replace('text-gray-500', activeColorClass);
+                }
+            }
+
+            updateNavVisibility();
+            
+            // Abre o elemento (Aba) default correto baseando-se na escolha
+            let targetTab = 'intro';
+            if(currentBrand === 'capital') {
+                targetTab = view === 'institucional' ? 'cap_inst_typo' : 'cap_tool_typo';
+            } else {
+                if (view === 'institucional') targetTab = 'esc_inst_typo';
+                else if (view === 'ferramentas') targetTab = 'esc_tool_typo';
+                else if (view === 'plataforma') targetTab = 'esc_plat_color';
+            }
+            
+            setActiveTab(targetTab);
+            atualizarAIFood();
+        }
+
+        function updateNavVisibility() {
+            const categories = document.querySelectorAll('.nav-category');
+            categories.forEach(cat => {
+                const brand = cat.getAttribute('data-brand');
+                const view = cat.getAttribute('data-view');
+                
+                const matchesBrand = (brand === 'all' || brand === currentBrand);
+                const matchesView = (view === 'all' || view === currentSystemView);
+
+                if (matchesBrand && matchesView) {
+                    cat.classList.remove('hidden-menu-item');
+                } else {
+                    cat.classList.add('hidden-menu-item');
+                }
+            });
+
+            const label = document.getElementById('active-view-label');
+            const brandStr = currentBrand === 'capital' ? 'Capital' : 'Escola';
+            let viewStr = 'Sites & LPs';
+            if (currentSystemView === 'ferramentas') viewStr = 'Ferramentas';
+            if (currentSystemView === 'plataforma') viewStr = 'Plataforma de Aulas';
+            
+            label.textContent = `${brandStr} > ${viewStr}`;
+            label.className = `font-mono text-sm leading-tight ${currentBrand === 'capital' ? 'text-green-500' : 'text-yellow-500'}`;
+        }
+
+        function setActiveTab(tabId) {
+            currentActiveTab = tabId;
+
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(sec => sec.classList.add('hidden-section'));
+            
+            const target = document.getElementById(`sec-${tabId}`);
+            if (target) {
+                target.classList.remove('hidden-section');
+                const contentArea = document.getElementById('content-area');
+                contentArea.classList.remove('fade-in');
+                void contentArea.offsetWidth;
+                contentArea.classList.add('fade-in');
+            }
+
+            const activeColor = currentBrand === 'capital' ? 'text-green-800' : 'text-yellow-700';
+            
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('text-green-800', 'text-yellow-700', 'bg-white', 'shadow-sm', 'ring-1', 'ring-gray-200');
+                btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+
+                // Aqui usamos o ID exacto do botão que passamos no click (tab-ID)
+                if (btn.id === `tab-${tabId}`) {
+                    btn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+                    btn.classList.add(activeColor, 'bg-white', 'shadow-sm', 'ring-1', 'ring-gray-200');
+                }
+            });
+            
+            window.scrollTo(0, 0);
+        }
+
+        function atualizarAIFood() {
+            const textarea = document.getElementById('ai-prompt-textarea');
+            const brandLabel = document.getElementById('ai-food-brand-label');
+            const viewLabel = document.getElementById('ai-food-view-label');
+            
+            if(!textarea) return;
+
+            brandLabel.textContent = currentBrand === 'capital' ? 'AUVP Capital' : 'AUVP Escola';
+            
+            let labelStr = 'Sites & LPs';
+            if(currentSystemView === 'ferramentas') labelStr = 'Ferramentas Interativas';
+            if(currentSystemView === 'plataforma') labelStr = 'Plataforma de EAD';
+            viewLabel.textContent = labelStr;
+
+            textarea.value = aiPrompts[currentBrand][currentSystemView];
+            
+            textarea.className = `w-full h-[500px] bg-transparent font-mono text-[13px] leading-relaxed resize-none outline-none hide-scrollbar selection:text-white ${currentBrand === 'capital' ? 'text-green-400 selection:bg-green-400/30' : 'text-yellow-400 selection:bg-yellow-400/30'}`;
+        }
+
+        function copyAiPrompt(btn) {
+            const textarea = document.getElementById('ai-prompt-textarea');
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                const icon = btn.querySelector('i');
+                const origClass = icon.className;
+                
+                const checkColor = currentBrand === 'capital' ? 'text-green-500' : 'text-yellow-500';
+                icon.className = `ph ph-check ${checkColor} font-bold`;
+                
+                setTimeout(() => {
+                    icon.className = origClass;
+                }, 2000);
+            });
+        }
+
+        function mostrarTabFaq(tabId, elemento, event) {
+            if (event) event.preventDefault();
+            const container = elemento.closest('.faq-container');
+            const tabs = container.querySelectorAll('.faq-tab');
+            tabs.forEach(t => t.style.display = 'none');
+            
+            container.querySelector('#' + tabId).style.display = 'block';
+
+            const menuItems = container.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('ativo'));
+
+            elemento.classList.add('ativo');
+        }
+
+        function copyCode(btn) {
+            const codeEl = btn.previousElementSibling;
+            if(!codeEl) return;
+            
+            const codeText = codeEl.innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const icon = btn.querySelector('i');
+                const origClass = icon.className;
+                
+                const checkColor = currentBrand === 'capital' ? 'text-green-500' : 'text-yellow-500';
+                icon.className = `ph ph-check ${checkColor} font-bold`;
+                
+                setTimeout(() => {
+                    icon.className = origClass;
+                }, 2000);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            atualizarCardsIntro();
+            updateNavVisibility();
+            atualizarAIFood();
+            setActiveTab('intro');
+        });
+    </script>
+</body>
+</html>
