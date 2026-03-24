@@ -979,6 +979,12 @@
            ESTILOS DE IMPRESSÃO / EXPORTAÇÃO PDF
            ========================================= */
         @media print {
+            /* Define o formato da página como A1 para o PDF */
+            @page {
+                size: A1;
+                margin: 15mm; /* Margem de respiro para o documento não colar às bordas */
+            }
+
             /* 1. Esconder UI e Multimédia */
             .navbar, .fab-pdf, .btn-export-section, .split-visual, .modulo-img-wrapper, video, .info-card-image {
                 display: none !important;
